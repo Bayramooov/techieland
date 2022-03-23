@@ -10,6 +10,15 @@ filials:
 	company_id => companies
 	...
 
+countries:
+	country_id
+	...
+
+regions:
+	region_id
+	country_id => countries
+	...
+
 persons:
 	person_id
 	...
