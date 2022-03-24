@@ -1,7 +1,50 @@
 ----------------------------------------------------------------------
--- CORE
+-- TECHIELAND-FRAMEWORK
 ----------------------------------------------------------------------
--- GLOBAL REFERENCES
+- design
+- login/logout
+- grid
+- select-input
+- ...
+
+----------------------------------------------------------------------
+-- CORE-GLOBAL (company-head)
+----------------------------------------------------------------------
+routes:
+	route_id
+	route_type (auth, public, company-head-only)
+	...
+
+companies:
+	company_id
+	...
+
+company_routes:
+	company_id
+	route_id
+	...
+
+coupons:
+	coupon_id
+	...
+
+licenses:
+	license_id
+	company_id
+	issue_date
+	dueto_date
+	is_paid
+	coupon_id => coupons
+	...
+
+layout_lang:
+	language_id
+	...
+
+----------------------------------------------------------------------
+-- CORE-LOCAL
+----------------------------------------------------------------------
+-- REF
 countries:
 	company_id
 	country_id
@@ -13,11 +56,7 @@ regions:
 	...
 
 --
-companies:
-	company_id
-	...
-
-filials:
+filials: (+filial-head)
 	company_id
 	filial_id
 	company_id => companies
@@ -32,8 +71,28 @@ users:
 	person_id => persons
 	...
 
+user_grants:
+	user_id
+	...
+
 ----------------------------------------------------------------------
 -- HR
 ----------------------------------------------------------------------
+divisions:
+	division_id
+	...
+
 robots:
 	robot_id
+	...
+
+----------------------------------------------------------------------
+-- ACADEMY
+----------------------------------------------------------------------
+- LMS
+- video tutorials (private/public)
+- assignments with deadlines
+- quizs
+- contest
+- attendance (offline/online)
+- ...
