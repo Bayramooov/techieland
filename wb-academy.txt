@@ -56,8 +56,13 @@ countries:
 	...
 
 regions:
+	company_id
 	region_id
 	country_id => countries
+	...
+
+currencies:
+	currency_id
 	...
 
 --
@@ -68,19 +73,24 @@ filials: (+filial-head)
 	...
 
 persons:
+	company_id
 	person_id
 	...
 
 users:
+	company_id
 	user_id
+	company_id
 	person_id => persons
 	...
 
 user_grants:
+	company_id
 	user_id
 	...
 
 notifications:
+	company_id
 	notification_id
 	...
 
@@ -88,10 +98,12 @@ notifications:
 -- HR
 ----------------------------------------------------------------------
 divisions:
+	company_id
 	division_id
 	...
 
 robots:
+	company_id
 	robot_id
 	...
 
