@@ -1,10 +1,15 @@
 ----------------------------------------------------------------------
--- TECHIELAND-FRAMEWORK
+-- TECHIELAND-FRAMEWORK (angular/golang or nodejs/posgreSql - no pl/pgsql for back-end!!!)
 ----------------------------------------------------------------------
 - design
 - login/logout
 - grid
 - select-input
+- file (upload/download)
+- drag & drop
+- notifications
+- hot-keys (hot-key-setting)
+- telegram-bot
 - ...
 
 ----------------------------------------------------------------------
@@ -73,6 +78,10 @@ users:
 
 user_grants:
 	user_id
+	...
+
+notifications:
+	notification_id
 	...
 
 ----------------------------------------------------------------------
