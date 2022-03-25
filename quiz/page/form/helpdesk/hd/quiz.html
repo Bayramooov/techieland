@@ -1,0 +1,473 @@
+<script type="biruni">
+page.ctrl(function(scope, model, fi, t, xparam) {
+  var d = _.isUndefined(model.quiz_id) ? _.extend(model, xparam) : model,
+      q = {};
+
+  q.tOptionPlaceholder = t('option')();
+  q.tValuePlaceholder = t('value')();
+  d.options = d.options || [];
+  q.data_kinds = _.mapRows(model.data_kinds, ['code', 'name']);
+
+  let bDataKind = q.data_kinds.find(elem => elem.code == 'B');
+
+  function deleteBooleanDataKind() {
+    q.data_kinds.splice(q.data_kinds.indexOf(bDataKind), 1);
+  }
+
+  deleteBooleanDataKind();
+
+  function optionConsturct() {
+    if (d.options.length == 0) {
+      d.options.push({
+          state: 'A'
+      });
+    } else if (d.data_kind == 'B' && d.options.length != 2) {
+      d.options = [];
+      d.options.push (
+      {
+        name: t('yes')(),
+        state: 'A'
+      },
+      {
+        name: t('no')(),
+        state: 'A'
+      });
+    }
+  }
+
+  function childQuizTabConstruct() {
+    _.each(d.options, function(option) {
+      if (option.child_quizs.length > 0 || option.child_quiz_sets.length > 0) {
+          option.hasChildTab = true;
+      } else {
+          option.hasChildTab = false;
+      }
+      childQuizsConstruct(option);
+    });
+  }
+
+  childQuizTabConstruct();
+
+  function childQuizsConstruct(option) {
+    if (!option.child_quizs || option.child_quizs.length == 0) {
+      option.child_quizs = [{}];
+    }
+
+    if (!option.child_quiz_sets || option.child_quiz_sets.length == 0) {
+      option.child_quiz_sets = [{}];
+    }
+  }
+
+  function childQuizsDestruct(option) {
+    option.child_quizs = [{}];
+    option.child_quiz_sets = [{}];
+  }
+
+  function save() {
+    _.each(d.options, function(option) {
+      if ( option.child_quizs ) {
+        option.child_quizs = option.child_quizs.filter(z => z.child_quiz_id  );
+      }
+      if ( option.child_quiz_sets ) {
+        option.child_quiz_sets = option.child_quiz_sets.filter(z => z.child_quiz_set_id  );
+      }
+    });
+    if (page.valid(scope.form)) {
+      let data = _.pick(d, 'quiz_id', 'name', 'state', 'data_kind', 'quiz_kind', 'select_multiple', 'select_form', 'min_scale', 'max_scale', 'options', 'is_required');
+      page.post(':save', data).then(page.close, page.alert);
+    }
+  }
+
+  function manualKindClick() {
+    d.quiz_kind = 'M';
+    d.select_multiple = '';
+    d.select_form = '';
+    d.min_scale = '';
+    d.max_scale = '';
+    d.options = [];
+
+    deleteBooleanDataKind();
+
+    if (d.data_kind == 'B')
+      onDataKindSelect( q.data_kinds.find((elem) => elem.code == 'N' ));
+  }
+
+  function multipleSelectYesClick() {
+    d.select_form = '';
+    d.min_scale = '';
+    d.max_scale = '';
+  }
+
+  function selectKindClick() {
+    d.select_multiple = 'N';
+    d.select_form = 'R';
+    if ( q.data_kinds.indexOf(bDataKind) == -1 )
+      q.data_kinds.push(bDataKind);
+
+    optionConsturct();
+  }
+
+  function addNewOption(index) {
+    if (d.data_kind == 'B'){
+      return;
+    }
+
+    d.options.splice(index + 1, 0, { state: 'A' });
+  }
+
+  function removeOption(index) {
+    if (d.data_kind == 'B') {
+      return;
+    }
+
+    if (d.options.length == 1) {
+      d.options = [{ state: 'A' }];
+    } else {
+      d.options.splice(index, 1);
+    }
+  }
+
+  function addNewChildOptionTab(option) {
+    option.hasChildTab = true;
+    childQuizsConstruct(option);
+  }
+
+  function removeChildOptionTab(option) {
+    option.hasChildTab = false;
+    childQuizsDestruct(option);
+  }
+
+  function addNewChildQuiz(option, index) {
+    option.child_quizs.splice(index + 1, 0, {});
+  }
+
+  function removeChildQuiz(option, index) {
+    if (option.child_quizs.length == 1){
+      option.child_quizs = [{}];
+    } else {
+      option.child_quizs.splice(index, 1);
+    }
+  }
+
+  function addNewChildQuizSet(option, index) {
+    option.child_quiz_sets.splice(index + 1, 0, {});
+  }
+
+  function removeChildQuizSet(option, index) {
+    if (option.child_quiz_sets.length == 1) {
+      option.child_quiz_sets = [{}];
+    } else {
+      option.child_quiz_sets.splice(index, 1);
+    }
+  }
+
+  function quizChange(query, child_quizs, value) {
+    let selectedQuizIds = _.chain(child_quizs)
+                           .filter(c => c.child_quiz_id)
+                           .pluck('child_quiz_id')
+                           .value();
+
+    if (d.quiz_id != undefined) {
+        selectedQuizIds.push(d.quiz_id);
+    }
+
+    query.where(_.isEmpty(selectedQuizIds) ? null : ['quiz_id', '<>', selectedQuizIds]);
+    query.searchValue(value);
+  }
+
+  function quizSetChange(query, child_quiz_sets, value) {
+    let selectedQuizSetIds = _.chain(child_quiz_sets)
+                           .filter(c => c.child_quiz_set_id)
+                           .pluck('child_quiz_set_id')
+                           .value();
+
+    query.where(_.isEmpty(selectedQuizSetIds) ? null : ['quiz_set_id', '<>', selectedQuizSetIds]);
+    query.searchValue(value);
+  }
+
+  function onDataKindSelect(row) {
+    d.data_kind_name = row.name;
+    d.data_kind = row.code;
+    if (d.quiz_kind != 'M'){
+      optionConsturct();
+    }
+  }
+
+  function onDataKindDelete(row) {
+    d.data_kind_name = '';
+    if (d.data_kind == 'B') {
+        d.options = [{}];
+    }
+    d.data_kind = '';
+  }
+
+  function setQuizSet(row, quiz_set) {
+    quiz_set.child_quiz_set_name = row.name;
+    quiz_set.child_quiz_set_id = row.quiz_set_id;
+  }
+
+  function deleteQuizSet(quiz_set) {
+    quiz_set.child_quiz_set_name = '';
+    quiz_set.child_quiz_set_id = '';
+  }
+
+  function addQuizSet(value, quiz_set) {
+    fi.add_quiz_set(null, _.partial(setQuizSet, _, quiz_set), { name: value });
+  }
+
+  function selectQuizSet(quiz_set) {
+    fi.select_quiz_set(null, _.partial(setQuizSet, _, quiz_set));
+  }
+
+  function setQuiz(row, quiz) {
+    quiz.child_quiz_name = row.name;
+    quiz.child_quiz_id = row.quiz_id;
+  }
+
+  function deleteQuiz(quiz) {
+    quiz.child_quiz_name = '';
+    quiz.child_quiz_id = '';
+  }
+
+  function addQuiz(value, quiz) {
+    fi.add_quiz(null, _.partial(setQuiz, _, quiz), { name: value });
+  }
+
+  function selectQuiz(quiz) {
+    fi.select_quiz(null, _.partial(setQuiz, _, quiz));
+  }
+
+  scope.d = d;
+  scope.q = q;
+});
+</script>
+<div class="b-toolbar row">
+  <div class="col-sm-14">
+    <button type="button" class="btn btn-primary" ng-click="save()" b-hotkey="save"><t>save</t></button>
+    <button type="button" class="btn btn-default" ng-click="page.close()">{{ page.close.title }}</button>
+  </div>
+</div>
+<div class="b-content"><form name="form">
+  <div class="form-group row">
+    <div class="col-sm-12">
+      <div class="card card-custom">
+        <div class="card-body">
+          <div class="form-group row">
+            <div class="col-24">
+              <label><t>name</t><r/></label>
+              <input type="text" class="form-control" ng-model="d.name" b-maxlength="200" required/>
+            </div>
+          </div>
+          <div class="form-group row">
+            <div class="col-24">
+               <label><t>quiz_kind</t><r/></label><br>
+               <label class="radio">
+                 <input type="radio" name="quiz_kind" value="M" ng-model="d.quiz_kind" ng-click="manualKindClick()" />
+                 <span><t>manual</t></span>
+               </label>
+               <label class="radio">
+                 <input type="radio" name="quiz_kind" value="S" ng-model="d.quiz_kind" ng-click="selectKindClick()" />
+                 <span><t>select</t></span>
+               </label>
+               <label class="radio">
+                 <input type="radio" name="quiz_kind" value="V" ng-model="d.quiz_kind" ng-click="selectKindClick()" />
+                 <span><t>select with value</t></span>
+               </label>
+            </div>
+          </div>
+           <div class="form-group row">
+            <div class="col-24">
+               <label><t>data_kind</t><r/></label>
+              <b-input local-data="q.data_kinds"
+                       model="d.data_kind_name"
+                       model-key="d.data_kind"
+                       on-select="onDataKindSelect(row)"
+                       on-delete="onDataKindDelete(row)" required>
+                <div class="col-sm-24">{{ row.name }}</div>
+              </b-input>
+            </div>
+          </div>
+          <div ng-if="d.data_kind == 'N' && d.quiz_kind == 'M'" class="form-group row">
+            <div class="col-12">
+               <label><t>min_scale</t></label>
+               <input type="text" class="form-control" b-number b-maxlength="20" ng-model="d.min_scale">
+            </div>
+            <div class="col-12">
+               <label><t>max_scale</t></label>
+               <input type="text" class="form-control" b-number b-maxlength="20" ng-model="d.max_scale">
+            </div>
+          </div>
+          <div  class="form-group row">
+            <div class="col-12">
+              <label><t>state</t></label><br/>
+              <label class="switch">
+                <input type="checkbox" ng-true-value="'A'" ng-false-value="'P'" ng-model="d.state"/>
+                <span>
+                  <t ng-if="d.state=='A'">active</t>
+                  <t ng-if="d.state=='P'">passive</t>
+                </span>
+              </label>
+            </div>
+            <div class="col-12">
+              <label><t>is required</t></label><br/>
+              <label class="switch">
+                <input type="checkbox" ng-true-value="'Y'" ng-false-value="'N'" ng-model="d.is_required"/>
+                <span>
+                  <t ng-if="d.is_required == 'Y'">required</t>
+                  <t ng-if="d.is_required == 'N'">not required</t>
+                </span>
+              </label>
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+  <div ng-if="d.quiz_kind != 'M'" class="col-sm-12">
+    <div class="card card-custom card-stretch">
+      <div class="card-body">
+        <div  class="form-group row">
+          <div class="col-24">
+             <label><t>select_multiple</t><r/></label><br>
+             <label class="radio">
+               <input type="radio" name="select_multiple" value="Y" ng-model="d.select_multiple" ng-click="multipleSelectYesClick()"/>
+               <span><t>yes</t></span>
+             </label>
+             <label class="radio">
+               <input type="radio" name="select_multiple" value="N" ng-model="d.select_multiple" />
+               <span><t>no</t></span>
+             </label>
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-24">
+            <label><t>select_form</t><r/></label><br>
+            <label ng-if="d.select_multiple!='N'"  class="radio">
+              <input type="radio" name="select_form" value="C" ng-model="d.select_form" />
+              <span><t>checkbox</t></span>
+            </label>
+            <label ng-if="d.select_multiple!='Y'" class="radio">
+              <input type="radio" name="select_form" value="R" ng-model="d.select_form" />
+              <span><t>radio</t></span>
+            </label>
+            <label class="radio">
+              <input type="radio" name="select_form" value="D" ng-model="d.select_form" />
+              <span><t>drop down list</t></span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  <div class="card card-custom card-stretch">
+    <div class="card-body p-0">
+      <div ng-if="d.quiz_kind != 'M' " class="justify-content-center p-4 col-sm-24">
+        <fieldset class="border rounded mb-7 pt-2 pb-4 px-7 col-sm-24">
+          <legend class="px-1 w-auto"><t>options</t></legend>
+          <div ui-tree>
+            <div ui-tree-nodes ng-model="d.options">
+              <div class="form-group row col-sm-24" ng-hide=" d.data_kind == '' " ui-tree-node ng-repeat="option in d.options" class="input-group mt-3" style="margin-top: 5px !important">
+                <div ng-class="{ 'col-sm-8' : d.quiz_kind == 'V', 'col-sm-12' : d.quiz_kind != 'V' }">
+                  <div class="form-group row">
+                    <div class="col-sm-5">
+                      <label class="switch">
+                        <input type="checkbox" ng-true-value="'A'" ng-false-value="'P'" ng-model="option.state"/>
+                        <span>
+                          <t ng-if="option.state=='A'">active</t>
+                          <t ng-if="option.state=='P'">passive</t>
+                        </span>
+                      </label>
+                    </div>
+                    <div class="col-sm-19">
+                      <input ng-if=" d.data_kind =='N' " class="form-control" placeholder="{{ q.tOptionPlaceholder }}" type="text" b-number  ng-model="option.name" required/>
+                      <input ng-if=" d.data_kind =='D' " class="form-control" placeholder="{{ q.tOptionPlaceholder }}" type="text" b-date-picker  ng-model="option.name" required/>
+                      <input ng-if=" d.data_kind =='S' " class="form-control" placeholder="{{ q.tOptionPlaceholder }}" type="text" b-maxlength="300" ng-model="option.name" required/>
+                      <textarea ng-if=" d.data_kind=='L'" class="form-control" placeholder="{{ q.tOptionPlaceholder }}" type="text" b-maxlength="300" ng-model="option.name" required/>
+                      <input ng-if=" d.data_kind=='B' "  class="form-control" placeholder="{{ q.tOptionPlaceholder }}" type="text" b-maxlength="300" ng-model="option.name" required/>
+                    </div>
+                  </div>
+                  <div ng-if="option.hasChildTab" style="margin-left:35px !important">
+                     <fieldset class="border rounded mb-7 pt-2 pb-4 px-7 col-24">
+                      <legend class="px-1 w-auto"><t>quizs</t></legend>
+                        <div class="col-24" ui-tree>
+                          <div ui-tree-nodes ng-model="option.child_quizs">
+                            <div  ui-tree-node ng-repeat="child_quiz in option.child_quizs" style="margin-top: 5px !important">
+                               <div class="input-group mb-3">
+                                  <b-input name="table_quizs"
+                                           model="child_quiz.child_quiz_name"
+                                           model-key="child_quiz.child_quiz_id"
+                                           column="quiz_id, name"
+                                           limit="5"
+                                           search="name"
+                                           on-select="setQuiz(row, child_quiz)"
+                                           on-delete="deleteQuiz(child_quiz)"
+                                           is-add="fi.add_quiz"
+                                           on-add="addQuiz(value, child_quiz)"
+                                           is-view="fi.select_quiz"
+                                           on-view="selectQuiz(child_quiz)"
+                                           on-change="quizChange(query, option.child_quizs, value)">
+                                           <div class="col-24">{{ row.name }}</div>
+                                  </b-input>
+                                  <span class="input-group-prepend">
+                                    <button type="button" class="btn btn-default" ng-click="addNewChildQuiz(option, $index)"><i class="fa fa-plus"></i></button>
+                                    <button type="button" class="btn btn-default" ng-click="removeChildQuiz(option, $index)" tabindex=-1><i class="fa fa-minus"></i></button>
+                                    <div class="btn btn-default" ui-tree-handle><i class="fa fa-arrows-alt-v"></i></div>
+                                  </span>
+                                </div>
+                            </div>
+                          </div>
+                        </div>
+                     </fieldset>
+                     <fieldset class="border rounded mb-7 pt-2 pb-4 px-7 col-24">
+                      <legend class="px-1 w-auto"><t>quiz sets</t></legend>
+                        <div class="col-24" ui-tree>
+                          <div ui-tree-nodes ng-model="option.child_quiz_sets">
+                            <div ui-tree-node ng-repeat="child_quiz_set in option.child_quiz_sets"
+                            style="margin-top: 5px !important">
+                               <div class="input-group mb-3">
+                                  <b-input name="table_quiz_sets"
+                                           model="child_quiz_set.child_quiz_set_name"
+                                           model-key="child_quiz_set.child_quiz_set_id"
+                                           column="quiz_set_id, name"
+                                           limit="5"
+                                           search="name"
+                                           on-select="setQuizSet(row, child_quiz_set)"
+                                           on-delete="deleteQuizSet(child_quiz_set)"
+                                           is-add="fi.add_quiz_set"
+                                           on-add="addQuizSet(value, child_quiz_set)"
+                                           is-view="fi.select_quiz_set"
+                                           on-view="selectQuizSet(child_quiz_set)"
+                                           on-change="quizSetChange(query, option.child_quiz_sets, value)">
+                                           <div class="col-24">{{ row.name }}</div>
+                                  </b-input>
+                                  <span class="input-group-prepend">
+                                    <button type="button" class="btn btn-default" ng-click="addNewChildQuizSet(option, $index)"><i class="fa fa-plus"></i></button>
+                                    <button type="button" class="btn btn-default" ng-click="removeChildQuizSet(option, $index)" tabindex=-1><i class="fa fa-minus"></i></button>
+                                    <div class="btn btn-default" ui-tree-handle><i class="fa fa-arrows-alt-v"></i></div>
+                                  </span>
+                                </div>
+                            </div>
+                          </div>
+                        </div>
+                     </fieldset>
+                  </div>
+                </div>
+                <div class="col-sm-4" ng-if="d.quiz_kind == 'V'">
+                  <input class="form-control" placeholder="{{q.tValuePlaceholder}}" type="text" ng-model="option.value" required/>
+                </div>
+                <span class="input-group-prepend ">
+                  <button type="button" ng-if=" d.data_kind!='B' " class="btn btn-default" ng-click="addNewOption($index)"><t>add option</t></i></button>
+                  <button type="button" ng-if=" d.data_kind!='B' " class="btn btn-default" ng-click="removeOption($index)" tabindex=-1><t>remove option</t></button>
+                  <button type="button" ng-hide="option.hasChildTab" class="btn btn-default" ng-click="addNewChildOptionTab(option)" > <t>add childen</t> </button>
+                  <button type="button" ng-show=" option.hasChildTab " class="btn btn-default" ng-click="removeChildOptionTab(option)" tabindex=-1><t>remove children</t></button>
+                  <div class="btn btn-default" ui-tree-handle><i class="fa fa-arrows-alt-v"></i></div>
+                </span>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+      </div>
+    </div>
+  </div>
+</div>
+</form></div>

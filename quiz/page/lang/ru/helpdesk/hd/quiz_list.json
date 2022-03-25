@@ -1,0 +1,19 @@
+{
+ "table.is_required_name": "Обязательный",
+ "table.quiz_id": "ИД",
+ "delete $1": "Удалить $1 ?",
+ "delete $1 quiz(s)?": "Удалить вопросов в количестве $1?",
+ "delete quiz $1!": "Удалить вопросов $1?",
+ "select": "Выбрать",
+ "table.data_kind": "Тип данных",
+ "table.data_kind_name": "Имя типа данных",
+ "table.max_scale": "Максимальное значение",
+ "table.min_scale": "Минимальное значение",
+ "table.name": "Название",
+ "table.quiz_kind": "Тип вопроса",
+ "table.quiz_kind_name": "Название типа вопроса",
+ "table.select_form": "Тип формы",
+ "table.select_multiple": "Множественный выбор",
+ "table.state_name": "Статус",
+ "table.select_multiple_name": "Название множественный выбор"
+}

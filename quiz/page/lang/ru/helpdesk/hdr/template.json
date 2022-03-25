@@ -1,0 +1,17 @@
+{
+ "across documents": "По опросам",
+ "across filials": "По филиалам",
+ "across quizs": "По вопросам",
+ "active": "Активный",
+ "all options": "Все варианты ответов",
+ "at least one quiz must be chosen": "Необходимо выбрать как минимум один вопрос",
+ "description": "Описание",
+ "name": "Название",
+ "options": "Варианты ответов",
+ "passive": "Неактивный",
+ "quizs": "Вопросы",
+ "save": "Сохранить",
+ "state": "Статус",
+ "template kind": "Тип шаблона",
+ "two quizs must be chosen": "Необходимо выбрать два вопроса"
+}

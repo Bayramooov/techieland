@@ -1,0 +1,272 @@
+<script biruni>
+  page.init(function () {
+    page.query('filials')
+        .column('filial_id','name')
+        .searchFields('name')
+        .sort('name');
+    page.query('quizs')
+        .column('quiz_id','name','data_kind','quiz_kind')
+        .searchFields('name')
+        .sort('name');
+    page.query('quiz_options')
+        .column('option_id','name','value','order_no')
+        .searchFields('name','value')
+        .sort(['order_no','name']);
+    var frame = page.$content.find('.report-frame')[0];
+    $(frame).on('load', () => {
+      frame.style.height = frame.contentWindow.document.documentElement.scrollHeight + 'px';
+    });
+  });
+  page.ctrl(function (scope, fi, param, model, t) {
+    var d = model || {}, q = {};
+    var frame = page.$content.find('.report-frame')[0];
+
+    page.title(page.title() + ': ' + d.template_name);
+
+    d.quizs = [];
+    q.isAllFilials = 'Y';
+    q.tAllFilials = t('all filials')();
+    q.tAllOptions = t('all options')();
+
+    setRunMode('P');
+
+    function run(rt, form) {
+      if (page.valid(scope.form)) {
+        var quizs = _.map(d.quizs, x => {
+          var quiz = _.pick(x, 'quiz_id');
+          quiz.options = _.pluck(x.options, 'option_id');
+          return quiz;
+        });
+        var data = {
+          rt: rt,
+          template_id: param.template_id,
+          begin_date: d.begin_date,
+          end_date: d.end_date,
+          statuses: _.filter([d.st_draft, d.st_new, d.st_processing, d.st_completed], x => x ? x : null),
+          filial_ids: _.pluck(d.filials, 'filial_id'),
+          quizs: JSON.stringify(quizs)
+        };
+        if (form || rt == 'xlsx' || rt == 'csv' || rt == 'xml') frame.src = page.url('run', data);
+        else window.open(page.url('run', data));
+        setRunMode('V');
+      }
+    }
+
+    function editSetting() {
+      fi.edit({ template_id: param.template_id });
+    }
+
+    function setRunMode(mode) {
+      q.runMode = mode;
+      q.classParameters = mode == 'P' ? 'btn-primary' : 'btn-default';
+      q.classView = mode == 'V' ? 'btn-primary' : 'btn-default';
+    }
+
+    function addQuiz(index) {
+      d.quizs.push({ is_all_options: 'Y', options: [] });
+    }
+
+    function deleteQuizRow(index) {
+      d.quizs.splice(index, 1);
+    }
+
+    function setQuiz(row, index) {
+      if (!row) return;
+      d.quizs[index].quiz_name = row.name;
+      d.quizs[index].quiz_id = row.quiz_id;
+      d.quizs[index].quiz_data_kind = row.data_kind;
+      d.quizs[index].quiz_kind = row.quiz_kind;
+      d.quizs[index].is_all_options = 'Y';
+      d.quizs[index].options = [];
+    }
+
+    function deleteQuiz(index) {
+      d.quizs[index] = { is_all_options: 'Y', options: [] };
+    }
+
+    function changeQuizsQuery(query, value) {
+      var ids = _.union(_.compact(_.pluck(d.quizs, 'quiz_id')), d.setting_quiz_ids, 'quiz_id');
+      var where = addWhere('quiz_id', '<>', ids, ['quiz_kind', '<>', 'M']);
+      query.where(where);
+      query.searchValue(value);
+    }
+
+    function changeQuizOptionsQuery(query, value, quiz) {
+      var ids = _.compact(_.pluck(quiz.options, 'option_id'));
+      var where = addWhere('option_id', '<>', ids, ['quiz_id', '=', quiz.quiz_id]);
+      query.where(where);
+      query.searchValue(value);
+    }
+
+    function clear(arr){
+      arr.splice(0, arr.length);
+    }
+
+    function addWhere(name, cond, values, where) {
+      var filt = [name, cond, _.compact(values)];
+      if (filt[2].length) {
+        if (where.length > 0) return ['and', [where, filt]];
+        else return filt;
+      }
+      return where;
+    }
+
+    scope.d = d;
+    scope.q = q;
+  });
+</script>
+<div class="b-toolbar row">
+  <div class="col-sm-24">
+    <div class="btn-group">
+      <button type="button" class="btn" ng-class="q.classParameters" ng-click="setRunMode('P')"><t>parameters</t></button>
+      <button type="button" class="btn" ng-class="q.classView" ng-click="setRunMode('V')"><t>view</t></button>
+      <button type="button" class="btn btn-default" ng-click="editSetting()" ng-if="fi.edit">{{fi.edit.title}}</button>
+    </div>
+    <button type="button" class="btn btn-default" ng-click="run('html', true)" ng-show="q.runMode == 'V'"><span class="fa fa-sync" aria-hidden="true"></span></button>
+    <div class="btn-group" ng-show="q.runMode == 'V'">
+      <button type="button" class="btn btn-link" ng-click="run('html', false)"><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span><t>HTML</t></button>
+      <button type="button" class="btn btn-link" ng-click="run('xlsx', false)"><span class="glyphicon glyphicon-cloud-download" aria-hidden="true"></span><t>Excel</t></button>
+      <button type="button" class="btn btn-link" ng-click="run('csv', false)"><span class="glyphicon glyphicon-cloud-download" aria-hidden="true"></span><t>CSV</t></button>
+      <button type="button" class="btn btn-link" ng-click="run('xml', false)"><span class="glyphicon glyphicon-cloud-download" aria-hidden="true"></span><t>XML</t></button>
+    </div>
+    <button type="button" class="btn btn-default" ng-click="page.close()">{{page.close.title}}</button>
+  </div>
+</div>
+<div class="b-content">
+  <div class="form-container" ng-show="q.runMode == 'P' || q.runMode == 'S'">
+    <form name="form">
+      <div class="row" ng-show="q.runMode == 'P'">
+        <div class="col-sm-24">
+          <div class="form-group row mt-5">
+            <div class="col-sm-6">
+              <label><t>begin date</t><r/></label>
+              <input type="text" class="form-control" b-date-picker ng-model="d.begin_date" required />
+            </div>
+            <div class="col-sm-6">
+              <label><t>end date</t><r/></label>
+              <input type="text" class="form-control" b-date-picker ng-model="d.end_date" required />
+            </div>
+          </div>
+          <div class="form-group row">
+            <div class="col-sm-12">
+              <label><t>survey status</t></label><br>
+              <label class="checkbox">
+                <input type="checkbox" ng-true-value="'D'" ng-model="d.st_draft" /><span><t>draft</t></span>
+              </label>
+              <label class="checkbox">
+                <input type="checkbox" ng-true-value="'N'" ng-model="d.st_new" /><span><t>new</t></span>
+              </label>
+              <label class="checkbox">
+                <input type="checkbox" ng-true-value="'P'" ng-model="d.st_processing" /><span><t>processing</t></span>
+              </label>
+              <label class="checkbox">
+                <input type="checkbox" ng-true-value="'C'" ng-model="d.st_completed" /><span><t>completed</t></span>
+              </label>
+            </div>
+          </div>
+          <div class="form-group row" ng-if="fi.isHead">
+            <div class="col-sm-12">
+              <label><t>filials</t></label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <div class="input-group-text">
+                    <label class="checkbox mt-n6 m-0">
+                      <input type="checkbox" ng-model="q.isAllFilials" ng-change="clear(d.filials)" ng-true-value="'Y'" ng-false-value="'N'" /><span></span>
+                    </label>
+                  </div>
+                </div>
+                <span style="flex: auto;" ng-hide="q.isAllFilials == 'Y'">
+                  <b-input multiple
+                          name="filials"
+                          model="d.filials"
+                          model-key="filial_id"
+                          label="name">
+                    <div class="col-sm-24">{{ row.name }}</div>
+                  </b-input>
+                </span>
+                <input class="form-control" ng-value="q.tAllFilials" ng-show="q.isAllFilials == 'Y'" readonly />
+              </div>
+            </div>
+          </div>
+          <div class="form-group row my-7">
+            <div class="col-sm-24">
+              <div class="row" ng-if="d.quizs.length">
+                <div class="col-sm-12">
+                  <label><t>quizs</t></label>
+                </div>
+                <div class="col-sm-12">
+                  <label><t>options</t></label>
+                </div>
+              </div>
+              <div class="form-group row" ng-repeat="quiz in d.quizs">
+                <div class="col-sm-12">
+                  <div class="input-group">
+                    <b-input name="quizs"
+                            model="quiz.quiz_name"
+                            model-key="quiz.quiz_id"
+                            on-select="setQuiz(row, $index)"
+                            on-delete="deleteQuiz($index, row)"
+                            on-change="changeQuizsQuery(query, value)"
+                            required-key>
+                      <div class="col-sm-24">{{ row.name }}</div>
+                    </b-input>
+                    <div class="input-group-append">
+                      <button type="button"
+                              class="btn btn-default btn-icon btn-hover-text-danger"
+                              ng-click="deleteQuizRow($index)">
+                              <i class="fa fa-trash"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-12" ng-if="quiz.quiz_id && quiz.quiz_kind != 'M'">
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <div class="input-group-text">
+                        <label class="checkbox mt-n6 m-0">
+                          <input type="checkbox" ng-model="quiz.is_all_options" ng-change="clear(quiz.options)" ng-true-value="'Y'" ng-false-value="'N'" /><span></span>
+                        </label>
+                      </div>
+                    </div>
+                    <span style="flex: auto;" ng-hide="quiz.is_all_options == 'Y'">
+                      <b-input multiple
+                              name="quiz_options"
+                              model="quiz.options"
+                              model-key="option_id"
+                              label="name"
+                              on-change="changeQuizOptionsQuery(query, value, quiz)">
+                        <div class="col-sm-24">{{ row.name }}</div>
+                      </b-input>
+                    </span>
+                    <input class="form-control" ng-value="q.tAllOptions" ng-show="quiz.is_all_options == 'Y'" readonly />
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="bg-light">
+                    <button type="button"
+                            class="btn btn-outline-primary btn-icon"
+                            ng-click="addQuiz($index)">
+                            <i class="fa fa-plus"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-24">
+              <button type="button" class="btn btn-primary" ng-click="run('html', true)"><t>generate</t></button>
+              <button type="button" class="btn btn-link" ng-click="run('html', false)"><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span><t>Html</t></button>
+              <button type="button" class="btn btn-link" ng-click="run('xlsx', false)"><span class="glyphicon glyphicon-cloud-download" aria-hidden="true"></span><t>Excel</t></button>
+              <button type="button" class="btn btn-link" ng-click="run('csv', false)"><span class="glyphicon glyphicon-cloud-download" aria-hidden="true"></span><t>CSV</t></button>
+              <button type="button" class="btn btn-link" ng-click="run('xml', false)"><span class="glyphicon glyphicon-cloud-download" aria-hidden="true"></span><t>XML</t></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <iframe class="report-frame" ng-show="q.runMode == 'V'" width="100%" frameborder="0"></iframe>
+</div>

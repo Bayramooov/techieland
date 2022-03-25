@@ -1,0 +1,113 @@
+<script type="biruni">
+page.init(function () {
+  page.isInit() && page.query("table").filter("state", "=", "A");
+  var stateClass = { A: "success", P: "danger" };
+  page.grid("table").asHtml("state_label", "state", (row) => {
+    return `<div class="alert alert-custom alert-light-${stateClass[row.state]} text-center py-1 px-3 m-0"><div class="alert-text">${row.state_name}</div></div>`;
+  });
+});
+page.ctrl(function (scope, fi, param, t) {
+  var q = {};
+
+  q.attachMode = true;
+  setAttchBtnClass();
+  fetchData();
+
+  function fetchData() {
+    page.query("table").param({
+        quiz_set_id: param.quiz_set_id,
+        attached: q.attachMode ? 'Y' : 'N',
+      }).fetch();
+    q.checked = {};
+  }
+
+  function makeAction(action, message, quiz_ids) {
+    page.confirm(message, function () {
+      action({ quiz_set_id: param.quiz_set_id, quiz_ids: quiz_ids }).then(fetchData, page.alert);
+    });
+  }
+
+  function setAttchBtnClass() {
+    q.classAttach = q.attachMode ? "btn-success" : "btn-default";
+    q.classDetach = !q.attachMode ? "btn-success" : "btn-default";
+  }
+
+  function attachOne(row) {
+    makeAction(fi.attach, t("do you want to attach $1 quiz?")(row.name), row.quiz_id);
+  }
+
+  function attachMany() {
+    makeAction(fi.attach, t("attach $1 quiz(s)?")(q.checked.size), _.pluck(q.checked.rows(), "quiz_id"));
+  }
+
+  function detachOne(row) {
+    makeAction(fi.detach, t("do you want to detach $1 quiz?")(row.name), row.quiz_id);
+  }
+
+  function detachMany() {
+    makeAction(fi.detach, t("detach $1 quiz(s)?")(q.checked.size), _.pluck(q.checked.rows(), "quiz_id"));
+  }
+
+  function onCheck(checked) {
+    q.checked = checked;
+  }
+
+  function setMode(mode) {
+    q.attachMode = mode == "attached";
+    setAttchBtnClass();
+    fetchData();
+  }
+
+  function onDblClick(row) {
+    q.attachMode ? detachOne(row) : attachOne(row);
+  }
+
+  scope.q = q;
+});
+</script>  
+<div class="b-toolbar row">
+  <div class="col-sm-14">
+    <div class="btn-group">
+      <button type="button" class="btn" ng-class="q.classAttach" ng-click="setMode('attached')"><t>attached</t></button>
+      <button type="button" class="btn" ng-class="q.classDetach" ng-click="setMode('detached')"><t>detached</t></button>
+    </div>
+    <button type="button" class="btn btn-primary" ng-click="attachMany()" ng-show="!q.attachMode && q.checked.has" ng-if="fi.attach">
+      <t p1="q.checked.size">attach $1 quiz(s)</t>
+    </button>
+    <button type="button" class="btn btn-danger" ng-click="detachMany()" ng-show="q.attachMode && q.checked.has" ng-if="fi.detach">
+      <t p1="q.checked.size">detach $1 quiz(s)</t>
+    </button>
+    <button type="button" class="btn btn-success" ng-click="fi.add_quiz()" ng-show="fi.add_quiz && !q.attachMode">{{ fi.add_quiz.title }}</button>
+    <button type="button" class="btn btn-default" ng-click="page.close()" ng-hide="page.isFirst()">{{ page.close.title }}</button>
+  </div>
+  <div class="col-sm-10 b-right">
+    <b-grid-controller name="table"/>
+  </div>
+</div>
+<div class="b-content">
+  <form name="form">
+    <b-grid name="table" on-dblclick="onDblClick(row)" on-check="onCheck(checked)" required="quiz_id, name" sort="order_no, name"
+    search="name" searchable="quiz_id, data_kind_name, select_form_name, select_multiple_name, min_scale, max_scale"
+    extra-columns="data_kind_name, select_form_name, select_multiple_name, min_scale, max_scale">
+      <b-row>
+        <b-col name="name" size=12/>
+        <b-col name="quiz_kind_name" size=6/>
+        <b-col name="state_name" as-html="state_label" size=5/>
+      </b-row>
+      <b-action>
+        <button type="button" class="btn btn-default" ng-click="page.close(row)" ng-if="page.isDialog()"><t>select</t></button>
+        <button type="button" class="btn btn-default" ng-click="attachOne(row)" ng-if="!q.attachMode && fi.attach">{{ fi.attach.title }}</button>
+        <button type="button" class="btn btn-default" ng-click="detachOne(row)" ng-if="q.attachMode && fi.detach">{{ fi.detach.title }}</button>
+      </b-action>
+      <b-filter name="quiz_id" directive="equal" extra/>
+      <b-filter name="name"/>
+      <b-filter name="state" decorate-with="state_name"/>
+      <b-filter name="data_kind" decorate-with="data_kind_name"/>
+      <b-filter name="quiz_kind" decorate-with="quiz_kind_name"/>
+      <b-filter name="select_multiple" decorate-with="select_multiple_name"/>
+      <b-filter name="select_form" decorate-with="select_form_name"/>
+      <b-filter name="min_scale"/>
+      <b-filter name="max_scale"/>
+    </b-grid>
+  </form>
+</div>
