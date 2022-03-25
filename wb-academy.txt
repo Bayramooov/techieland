@@ -95,6 +95,9 @@ notifications:
 	notification_id
 	...
 
+-- Survey module (not urgent)
+	./survey -- TODO: should be converted to pgsql
+
 ----------------------------------------------------------------------
 -- HR
 ----------------------------------------------------------------------

@@ -1,0 +1,80 @@
+<script type="biruni">
+page.init(function() {
+  page.isInit() && page.query('table').filter('state', '=', 'A');
+  var stateClass = { A: 'success', P: 'danger' };
+  page.grid('table').asHtml('state_label', 'state', row => {
+    return `<div class="alert alert-custom alert-light-${stateClass[row.state]} text-center py-1 px-3 m-0"><div class="alert-text">${ row.state_name }</div></div>`;
+  });
+});
+page.ctrl(function(scope, fi, t) {
+  var q = {};
+
+  function deleteOne(row) {
+    page.confirm(t('delete quiz_set $1?')(row.name), function() {
+      fi.delete({ quiz_set_id: row.quiz_set_id }).then(page.reload, page.alert);
+    });
+  }
+
+  function deleteMany() {
+    page.confirm(t('delete $1 quiz_set(s)?')(q.checked.size), function() {
+      fi.delete({quiz_set_id: _.pluck(q.checked.rows(), 'quiz_set_id')}).then(page.reload, page.alert);
+    });
+  }
+
+  function edit(row) {
+    fi.edit({ quiz_set_id: row.quiz_set_id });
+  }
+
+  function bindQuizs(row) {
+    fi.bind_quizs({ quiz_set_id: row.quiz_set_id });
+  }
+
+  function setOrder(row) {
+    fi.set_order({ quiz_set_id: row.quiz_set_id });
+  }
+
+  function onCheck(checked) {
+    q.checked = checked;
+  }
+
+  function onDblclick(row) {
+    page.isDialog() ? page.close(row) : fi.edit ? edit(row) : null;
+  }
+
+  scope.q = q;
+});
+</script>
+<div class="b-toolbar row">
+  <div class="col-sm-14">
+    <button type="button" class="btn btn-success" ng-click="fi.add()" ng-if="fi.add" b-hotkey="add">{{ fi.add.title }}</button>
+    <button type="button" class="btn btn-danger" ng-click="deleteMany()" ng-if="fi.delete" ng-show="q.checked.has">
+      <t p1="q.checked.size">delete $1</t>
+    </button>
+  </div>
+  <div class="col-sm-10 b-right">
+    <b-grid-controller name="table"/>
+  </div>
+</div>
+<div class="b-content">
+  <form name="form">
+    <b-grid name="table" required="quiz_set_id, name, child_quiz_count" on-check="onCheck(checked)" on-dblclick="onDblclick(row)" sort="name" search="name" searchable="quiz_set_id, description">
+      <b-row>
+        <b-col name="name" size=7/>
+        <b-col name="description" size=9/>
+        <b-col name="child_quiz_count" size=3/>
+        <b-col name="state_name" as-html="state_label" size=4>
+      </b-row>
+      <b-action>
+        <button type="button" class="btn btn-default" ng-click="page.close(row)" ng-if="page.isDialog()"><t>select</t></button>
+        <button type="button" class="btn btn-default" ng-click="edit(row)" ng-if="fi.edit">{{ fi.edit.title }}</button>
+        <button type="button" class="btn btn-default" ng-click="deleteOne(row)" ng-if="fi.delete">{{ fi.delete.title }}</button>
+        <button type="button" class="btn btn-default" ng-click="bindQuizs(row)" ng-if="fi.bind_quizs">{{ fi.bind_quizs.title }}</button>
+        <button type="button" class="btn btn-default" ng-click="setOrder(row)" ng-if="fi.set_order && row.child_quiz_count > 0">{{ fi.set_order.title }}</button>
+      </b-action>
+      <b-filter name="quiz_set_id" directive="equal" extra/>
+      <b-filter name="name"/>
+      <b-filter name="description" extra/>
+      <b-filter name="state" decorate-with="state_name"/>
+    </b-grid>
+  </form>
+</div>

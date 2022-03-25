@@ -1,0 +1,9 @@
+{
+ "delete $1": "Удалить $1 ?",
+ "delete $1 quiz_set_group(s)?": "Удалить группа вопросов в количестве $1?",
+ "delete quiz_set_group $1?": "Удалить группу вопросов $1?",
+ "table.child_quiz_set_count": "наборы вопросов",
+ "table.name": "Название",
+ "table.quiz_set_group_id": "ИД",
+ "table.state_name": "Статус"
+}

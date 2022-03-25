@@ -1,0 +1,49 @@
+<script type="biruni">
+page.ctrl(function(scope, param, model) {
+  var d = _.extend(model, param);
+
+  function save() {
+    if (page.valid(scope.form)) {
+      page.post(':save', d).then(page.close, page.alert);
+    }
+  }
+
+  scope.d = d;
+});
+</script>
+<div class="b-toolbar row">
+  <div class="col-sm-14">
+    <button type="button" class="btn btn-primary" ng-click="save()" b-hotkey="save"><t>save</t></button>
+    <button type="button" class="btn btn-default" ng-click="page.close()">{{ page.close.title }}</button>
+  </div>
+</div>
+<div class="b-content">
+  <form name="form">
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="card card-custom">
+          <div class="card-body">
+            <div class="form-group row">
+              <div class="col-24">
+                <label><t>name</t><r /></label>
+                <input type="text" class="form-control" ng-model="d.name" b-maxlength="200" required />
+              </div>
+            </div>
+            <div class="form-group row">
+              <div class="col-24">
+                <label><t>state</t></label><br />
+                <label class="switch">
+                  <input type="checkbox" ng-true-value="'A'" ng-false-value="'P'" ng-model="d.state" />
+                  <span>
+                    <t ng-if="d.state=='A'">active</t>
+                    <t ng-if="d.state=='P'">passive</t>
+                  </span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

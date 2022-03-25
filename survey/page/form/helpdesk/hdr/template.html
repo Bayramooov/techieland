@@ -1,0 +1,234 @@
+<script biruni>
+  page.init(function () {
+    page.query('quizs')
+        .column('quiz_id','name','data_kind','quiz_kind')
+        .searchFields('name')
+        .sort('name');
+    page.query('quiz_options')
+        .column('option_id','name','value','order_no')
+        .searchFields('name','value')
+        .sort(['order_no','name']);
+  });
+  page.ctrl(function (scope, fi, model, t) {
+    var d = model || {}, q = {};
+
+    q.tAllOptions = t('all options')();
+    
+    function save() {
+      if (!validate()) return;
+      var data = _.pick(d, 'template_id','name','description','template_kind','state');
+      var setting = {};
+      setting.quizs = _.map(d.template_setting.quizs, quiz => {
+        var obj = _.pick(quiz, 'quiz_id');
+        obj.options = _.pluck(quiz.options, 'option_id');
+        return obj;
+      });
+      data.setting = JSON.stringify(setting);
+      fi.save(data).then(page.close(), page.alert);
+    }
+
+    function validate() {
+      if (!page.valid(scope.form)) return !1;
+      if (d.template_kind != 'Q' && _.isEmpty(d.template_setting.quizs))
+        return page.alert(t('at least one quiz must be chosen')()), !1;
+      if (d.template_kind == 'Q' && d.template_setting.quizs.length != 2)
+        return page.alert(t('two quizs must be chosen')()), !1;
+      return true;
+    }
+
+    function changeTemplateKind() {
+      switch(d.template_kind) {
+        case 'F': d.template_setting.quizs = [];
+                  break;
+        case 'Q': d.template_setting.quizs = [];
+                  d.template_setting.quizs.push({ is_all_options: 'Y', options: [] });
+                  d.template_setting.quizs.push({ is_all_options: 'Y', options: [] });
+                  break;
+        case 'D': d.template_setting.quizs = [];
+                  break;
+      }
+    }
+
+    function addQuiz(index) {
+      d.template_setting.quizs.push({ is_all_options: 'Y', options: [] });
+    }
+
+    function deleteQuizRow(index) {
+      d.template_setting.quizs.splice(index, 1);
+    }
+
+    function setQuiz(row, index) {
+      if (!row) return;
+      d.template_setting.quizs[index].quiz_name = row.name;
+      d.template_setting.quizs[index].quiz_id = row.quiz_id;
+      d.template_setting.quizs[index].quiz_data_kind = row.data_kind;
+      d.template_setting.quizs[index].quiz_kind = row.quiz_kind;
+      d.template_setting.quizs[index].is_all_options = 'Y';
+      d.template_setting.quizs[index].options = [];
+    }
+
+    function deleteQuiz(index) {
+      d.template_setting.quizs[index] = { is_all_options: 'Y', options: [] };
+    }
+
+    function changeQuizsQuery(query, value) {
+      var ids = _.compact(_.pluck(d.template_setting.quizs, 'quiz_id')), where = [], where2 = [];
+      if (d.template_kind == 'Q') {
+        where = ['quiz_kind', '<>', 'M'];
+        where2 = ['quiz_kind', '<>', 'M'];
+      }
+      if (ids.length) {
+        where = addWhere('quiz_id', '<>', ids, where2);
+      }
+      query.where(where);
+      query.searchValue(value);
+    }
+
+    function changeQuizOptionsQuery(query, value, quiz) {
+      var ids = _.compact(_.pluck(quiz.options, 'option_id'));
+      var where = addWhere('option_id', '<>', ids, ['quiz_id', '=', quiz.quiz_id]);
+      query.where(where);
+      query.searchValue(value);
+    }
+
+    function clear(arr){
+      arr.splice(0, arr.length);
+    }
+
+    function addWhere(name, cond, values, where) {
+      var filt = [name, cond, _.compact(values)];
+      if (filt[2].length) {
+        if (where.length > 0) return ['and', [where, filt]];
+        else return filt;
+      }
+      return where;
+    }
+
+    scope.d = d;
+    scope.q = q;
+  });
+</script>
+<div class="b-toolbar row">
+  <div class="col-sm-12">
+    <button type="button" class="btn btn-primary" ng-click="save()" b-hotkey="save"><t>save</t></button>
+    <button type="button" class="btn btn-default" ng-click="page.close()">{{ page.close.title }}</button>
+  </div>
+</div>
+<div class="b-content">
+  <form name="form">
+    <div class="form-row">
+      <div class="col-sm-24">
+        <div class="card card-custom">
+          <div class="card-body">
+            <div class="form-group row">
+              <div class="col-sm-12">
+                <div class="form-group row">
+                  <div class="col-sm">
+                    <label><t>name</t><r /></label><br />
+                    <input class="form-control" ng-model="d.name" b-maxlength="300" required />
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <div class="col-sm">
+                    <label><t>template kind</t></label><br />
+                    <label class="radio">
+                      <input type="radio" name="template_kind" value="F" ng-model="d.template_kind" ng-change="changeTemplateKind()" tabindex="-1" />
+                      <span><t>across filials</t></span>
+                    </label>
+                    <label class="radio">
+                      <input type="radio" name="template_kind" value="Q" ng-model="d.template_kind" ng-change="changeTemplateKind()" tabindex="-1" />
+                      <span><t>across quizs</t></span>
+                    </label>
+                    <label class="radio">
+                      <input type="radio" name="template_kind" value="D" ng-model="d.template_kind" ng-change="changeTemplateKind()" tabindex="-1" />
+                      <span><t>across documents</t></span>
+                    </label>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <div class="col-sm">
+                    <label><t>state</t></label><br />
+                    <label class="switch">
+                      <input type="checkbox" ng-true-value="'A'" ng-false-value="'P'" ng-model="d.state" />
+                      <span>
+                        <t ng-if="d.state=='A'">active</t>
+                        <t ng-if="d.state=='P'">passive</t>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-12">
+                <label><t>description</t></label>
+                <textarea type="text" class="form-control" rows="6" ng-model="d.description" b-maxlength="3000" />
+              </div>
+            </div>
+            <div>
+              <div class="form-group row" ng-if="d.template_setting.quizs.length">
+                <div class="col-sm">
+                  <h4><t>quizs</t></h4>
+                </div>
+                <div class="col-sm">
+                  <h4><t>options</t></h4>
+                </div>
+              </div>
+              <div class="form-group row mb-7" ng-repeat="quiz in d.template_setting.quizs">
+                <div class="col-sm-12">
+                  <div class="input-group">
+                    <b-input name="quizs"
+                            model="quiz.quiz_name"
+                            model-key="quiz.quiz_id"
+                            on-select="setQuiz(row, $index)"
+                            on-delete="deleteQuiz($index, row)"
+                            on-change="changeQuizsQuery(query, value)"
+                            required-key>
+                      <div class="col-sm-24">{{ row.name }}</div>
+                    </b-input>
+                    <div class="input-group-append" ng-if="d.template_kind != 'Q'">
+                      <button type="button"
+                              class="btn btn-default btn-icon btn-hover-text-danger"
+                              ng-click="deleteQuizRow($index)">
+                              <i class="fa fa-trash"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-12" ng-if="quiz.quiz_id && quiz.quiz_kind != 'M'">
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <div class="input-group-text">
+                        <label class="checkbox mt-n6 m-0">
+                          <input type="checkbox" ng-model="quiz.is_all_options" ng-change="clear(quiz.options)" ng-true-value="'Y'" ng-false-value="'N'" /><span></span>
+                        </label>
+                      </div>
+                    </div>
+                    <span style="flex: auto;" ng-hide="quiz.is_all_options == 'Y'">
+                      <b-input multiple
+                              name="quiz_options"
+                              model="quiz.options"
+                              model-key="option_id"
+                              label="name"
+                              on-change="changeQuizOptionsQuery(query, value, quiz)">
+                        <div class="col-sm-24">{{ row.name }}</div>
+                      </b-input>
+                    </span>
+                    <input class="form-control" ng-value="q.tAllOptions" ng-show="quiz.is_all_options == 'Y'" readonly />
+                  </div>
+                </div>
+              </div>
+              <div class="row bg-white" ng-if="d.template_kind != 'Q'">
+                <div class="col-sm-24">
+                  <button type="button"
+                          class="btn btn-outline-primary btn-icon"
+                          ng-click="addQuiz($index)">
+                          <i class="fa fa-plus"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

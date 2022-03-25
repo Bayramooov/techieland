@@ -1,0 +1,11 @@
+{
+ "delete $1": "Удалить $1 ?",
+ "delete $1 quiz_set(s)?": "Удалить наборы вопросов в количестве $1?",
+ "delete quiz_set $1?": "Удалить набор вопросов $1?",
+ "select": "Выбрать",
+ "table.child_quiz_count": "Вопросов",
+ "table.description": "Описание",
+ "table.name": "Название",
+ "table.quiz_set_id": "ИД",
+ "table.state_name": "Статус"
+}

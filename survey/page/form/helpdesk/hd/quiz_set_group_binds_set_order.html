@@ -1,0 +1,38 @@
+<script type="biruni">
+page.ctrl(function (scope, model, param) {
+  var q = model;
+
+  q.quiz_sets = _.mapRows(model, ['quiz_set_id', 'name', 'order_no']);
+
+  function save() {
+    var data = _.map(q.quiz_sets, function(x) { return {quiz_set_id: x.quiz_set_id, order_no: x.order_no}; });
+    page.post(':save', {
+      quiz_sets: data,
+      quiz_set_group_id: param.quiz_set_group_id
+    }).then(page.close, page.alert);
+  }
+
+  scope.q = q;
+});
+</script>
+<div class="b-toolbar row">
+  <div class="col-sm-14">
+    <button type="button" class="btn btn-primary" ng-click="save()" b-hotkey="save"><t>save</t></button>
+    <button type="button" class="btn btn-default" ng-click="page.close()">{{ page.close.title }}</button>
+  </div>
+  <div class="col-sm-10 b-right">
+    <b-pg-controller name="table"/>
+  </div>
+</div>
+<div class="b-content">
+  <form name="form">
+    <b-pg-grid name="table" local-data="q.quiz_sets" search="name">
+      <b-pg-row>
+        <b-pg-col name="name" size=21/>
+        <b-pg-col name="order_no" size=3>
+          <input type="text" class="form-control" ng-model="row.order_no" b-maxlength="6" b-number/>
+        </b-pg-col>
+      </b-pg-row>
+    </b-pg-grid>
+  </form>
+</div>
