@@ -13,6 +13,7 @@
 - audit
 - OOP based nodejs/golang instrument for working with database (FAZO, Z-packages, fazo_query):
 	every table is gonna be a Class with its Z-package methods
+	they will be generated automatically.
 - ...
 
 ----------------------------------------------------------------------
