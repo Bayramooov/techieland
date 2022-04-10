@@ -1,0 +1,5 @@
+name - prefix - type - description:
+
+techie - T (techie) - framework - base framework itself
+  core - K (kernel) - minimal and core logic of applications
+    profit () - 

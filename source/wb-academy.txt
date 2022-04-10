@@ -1,19 +1,23 @@
 ----------------------------------------------------------------------
--- TECHIELAND-FRAMEWORK (angular/golang or nodejs/posgreSql - no pl/pgsql for back-end!!!)
+-- TECHIE-FRAMEWORK (angular/golang or nodejs/posgreSql - no pl/pgsql for back-end!!!)
 ----------------------------------------------------------------------
-- design
-- login/logout
-- grid
-- select-input
+- techie-layout design should be done
+- authentication
+- tc-stream
+- tc-grid with tc-stream
+- tc-input with tc-stream
 - file (upload/download)
 - drag & drop
 - notifications
 - hot-keys (hot-key-setting)
 - telegram-bot
 - audit
-- OOP based nodejs/golang instrument for working with database (FAZO, Z-packages, fazo_query(stream)):
+- translate module
+- OOP based nodejs/golang instrument for working with database (FAZO, fazo_query(stream)):
 	every table is gonna be a Class with its Z-package methods
 	they will be generated automatically.
+- Z-packages - in the database and also in the server side as classes with methods
+- installer page in the web which fills the env.js and executes the tables etc...
 - ...
 
 ----------------------------------------------------------------------
