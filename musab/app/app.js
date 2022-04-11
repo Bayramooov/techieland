@@ -12,7 +12,7 @@ const pool = mysql.createPool({
   debug: env.debug
 });
 
-app.use(require('./server/middlewares/parse-url.js'));
+app.use(require('./mw/parse-url.js'));
 
 // app.use((req, res, next) => {
 //   let selectQuery = 'select * from ?? where ?? = ?';
