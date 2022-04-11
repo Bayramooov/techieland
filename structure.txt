@@ -1,5 +1,0 @@
-framework_name: Musab, Parvoz, Makon, Orzu, Osmon, Falak, Koinot
-
-Musab - T (techie) - framework - base framework itself
-  core - K (kernel) - minimal and core logic of applications
-    profit () - 
