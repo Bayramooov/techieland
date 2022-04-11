@@ -10,3 +10,4 @@ module.exports = {
   database: 'techieland',
   debug: false
 }
+
