@@ -1,13 +1,14 @@
 framework_name: Musab, Parvoz, Makon, Orzu, Osmon, Falak, Koinot
 
-falak - (F)alak - (required) - framework itself - base framework itself no logic at all
+Musab - (M)usab - (required) - framework itself - base framework itself no logic at all
   core - (K)ernel - (required) - framework project - minimal and core logic of applications
     license - licen(S)e - (optional) - core project module for product licenses per user per module etc...
 
 
 
 
-
+solved! TODO-issue: database connection pool must be called once !!! (not in every module)
+waiting! TODO-issue: error handling must be done globally (responce.json like { success: false, ... })
 
 
 
