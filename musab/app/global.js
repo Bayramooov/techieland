@@ -21,7 +21,7 @@ const call = query => {
   return new Promise((res, rej) => {
     db.pool.query(query, (err, rows) => {
       if (err) rej(err);
-      // else if (!rows.length) rej(new Error('no data found'));
+      else if (!rows.length) rej(new Error('no data found'));
       res(rows);
     });
   });

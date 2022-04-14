@@ -22,11 +22,12 @@ class Route {
                        on q.path_code = t.path_code
                     where t.path = ?
                       and q.action = ?`;
-      // try {
-      var result = await db.call(db.mysql.format(query, [trusted_path, trusted_action]));
-      // } catch (error) {
-        // console.error('error while fetching the query', error);
-      // }
+      try {
+        var result = await db.call(db.mysql.format(query, [trusted_path, trusted_action]));
+      } catch (error) {
+        console.error(error);
+        return this;
+      }
       // if (typeof result !== 'object') console.error('multiple rows returned');
       result = JSON.parse(JSON.stringify(result))[0];
       // route

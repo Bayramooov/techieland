@@ -6,6 +6,7 @@ module.exports = (req, res, next) => {
       var route = await new Route(req.url, 'model');
     } catch (err) {
       console.error(err);
+      res.status(400).send('<pre>' + 'Bad request!<br><br>' + err + '</pre>');
     }
 
     if (route.state == 'P') { next(); return; }
@@ -14,6 +15,7 @@ module.exports = (req, res, next) => {
       var load = await require(`../ui${route.path}`)['model']();
     } catch (err) {
       console.error(err);
+      res.status(400).send('<pre>' + 'Bad request!<br><br>' + err + '</pre>');
     }
 
     console.log('Success!', req.url)
