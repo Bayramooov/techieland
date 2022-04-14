@@ -12,14 +12,25 @@
  */
 
 module.exports = {
-  // Server
+  // server port
   port: null,
-
-  // Database credentials
+  
+  // database credentials
   connection_limit: null,
-  host: null,
-  user: null,
-  password: null,
-  database: null,
-  debug: null
+  host: '',
+  user: '',
+  password: '',
+  database: '',
+  debug: null,
+
+  // TODO: depricated
+  base_path: __dirname,
+
+  // dependents
+  projects: [
+    {
+      name: '',
+      path: ''
+    }
+  ]
 }

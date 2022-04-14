@@ -1,3 +1,12 @@
+/**
+ * "run once share everywhere" objects globally declared.
+ * no need to use `require('./...')`
+ * 
+ * database initialization (pool) is located here in order not to
+ * run the initialization everytime needed in controller files.
+ * here it will be initialized only once.
+ */
+
 const env = require('./env.js');
 const mysql = require('mysql');
 const pool = mysql.createPool({
@@ -12,7 +21,7 @@ const call = query => {
   return new Promise((res, rej) => {
     db.pool.query(query, (err, rows) => {
       if (err) rej(err);
-      else if (!rows.length) rej(new Error('no data found'));
+      // else if (!rows.length) rej(new Error('no data found'));
       res(rows);
     });
   });
@@ -22,15 +31,6 @@ const db = {
   pool: pool,
   call: call
 }
-
-/**
- * some of the functionalities globally declared so as to use them everywhere,
- * without using `require('./...')` and running them everytime.
- * 
- * database connection (pool) initialised once only then declared globally,
- * so the connection is not called everytime
- * env object globally declared so as to use it everywhere withou
- */
 
 global.env = env;
 global.db = db;
