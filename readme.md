@@ -9,8 +9,11 @@ Musab - (M)usab - (required) - framework itself - base framework itself no logic
 
 solved! TODO-issue: database connection pool must be called once !!! (not in every module)
 waiting! TODO-issue: error handling must be done globally (responce.json like { success: false, ... })
-
-
+waiting! TODO-task: exchanging json standart template must be created
+waiting! TODO-task: response statuses must be set properly 
+waiting! TODO-task: developing client side of the program
+         (https://dashboardpack.com/bootstrap-templates/free-themes/)
+         (https://dashboardpack.com/live-demo-free/?livedemo=2380)
 
 ----------------------------------------------------------------------
 -- TECHIE-FRAMEWORK (angular/golang or nodejs/posgreSql - no pl/pgsql for back-end!!!)
