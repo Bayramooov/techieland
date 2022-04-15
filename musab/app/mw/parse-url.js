@@ -16,6 +16,7 @@ module.exports = (req, res, next) => {
     } catch (err) {
       console.error(err);
       res.status(400).send('<pre>' + 'Bad request!<br><br>' + err + '</pre>');
+      return;
     }
 
     console.log('Success!', req.url)
