@@ -4,8 +4,9 @@
 
 1. [Routes](#routes)
    1. [URL terminology](#URL-terminology)
-   1. [Route: Columns](#Route:-Columns)
-   1. [Route: Constraints](#Route:-Constraints)
+   1. [Route: Columns](#Route-Columns)
+   1. [Route: Constraints](#Route-Constraints)
+1. Roles
 
 ## Routes
 
