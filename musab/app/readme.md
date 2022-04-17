@@ -2,7 +2,10 @@
 
 ### Content:
 
-- [Routes](#routes)
+1. [Routes](#routes)
+   1.1. [URL terminology](#URL-terminology)
+   1.1. [Route: Columns](#Route:-Columns)
+   1.1. [Route: Constraints](#Route:-Constraints)
 
 ## Routes
 
@@ -30,7 +33,7 @@ Routes - is the table of all the routes which can be handled by the server. All 
 - `?route_id=374&action=save` is QUERY.
 - `#top` is FRAGMENT (hash).
 
-### Router columns
+### Route: Columns
 
 <dl>
   <dt><i>route</i></dt>
@@ -74,3 +77,5 @@ Routes - is the table of all the routes which can be handled by the server. All 
   <dt><i>state</i></dt>
   <dd>route can be switched off (set to (P)assive) for a while when maintenance is on-going by company head users. And can be switched on back (set to (A)ctive)</dd>
 </dl>
+
+### Route: Constraints
