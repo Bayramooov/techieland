@@ -1,11 +1,12 @@
--- musab_routes
-insert into `musab_routes` (`path_code`, `path`, `access_kind`, `grant`, `state`) values ('ui_musab1', '/musab/route', 'P', 'A', 'A');
-insert into `musab_routes` (`path_code`, `path`, `access_kind`, `grant`, `state`) values ('ui_musab2', '/musab/route_list', 'P', 'A', 'A');
-insert into `musab_routes` (`path_code`, `path`, `access_kind`, `grant`, `state`) values ('ui_musab3', '/musab/route_view', 'P', 'A', 'A');
-
 -- inserting into ROUTES
-insert into `musab_route_actions` (`path_code`, `action`, `action_kind`, `pass_parameter`, `state`) values ('ui_musab1', 'add_model', 'A', 'N', 'A');
-insert into `musab_route_actions` (`path_code`, `action`, `action_kind`, `pass_parameter`, `state`) values ('ui_musab1', 'edit_model', 'A', 'Y', 'A');
-insert into `musab_route_actions` (`path_code`, `action`, `action_kind`, `pass_parameter`, `state`) values ('ui_musab2', 'model', 'A', 'N', 'A');
-insert into `musab_route_actions` (`path_code`, `action`, `action_kind`, `pass_parameter`, `state`) values ('ui_musab2', 'delete', 'A', 'Y', 'A');
-insert into `musab_route_actions` (`path_code`, `action`, `action_kind`, `pass_parameter`, `state`) values ('ui_musab3', 'model', 'A', 'Y', 'A');
+-- (route, path, action, route_kind, function, pass_parameter, redirect_route, privacy, access, grant, state)
+insert into `musab_routes` values ('/musab/route+add', '/musab/route', '', 'P', '', 'N', '', 'P', 'A', 'N', 'A');
+insert into `musab_routes` values ('/musab/route+add:model', '/musab/route', 'model', 'A', 'add_model', 'Y', '', 'P', 'A', 'N', 'A');
+
+insert into `musab_routes` values ('/musab/route+edit', '/musab/route', '', 'P', '', 'N', '', 'P', 'A', 'N', 'A');
+insert into `musab_routes` values ('/musab/route+edit:model', '/musab/route', 'model', 'A', 'edit_model', 'Y', '', 'P', 'A', 'N', 'A');
+
+insert into `musab_routes` values ('/musab/route_list', '/musab/route_list', '', 'P', '', 'N', '', 'P', 'A', 'N', 'A');
+insert into `musab_routes` values ('/musab/route_list:model', '/musab/route_list', 'model', 'A', 'model', 'N', '', 'P', 'A', 'N', 'A');
+insert into `musab_routes` values ('/musab/route_list:add', '/musab/route_list', 'add', 'R', '', 'N', '/musab/route+add', 'P', 'A', 'N', 'A');
+insert into `musab_routes` values ('/musab/route_list:edit', '/musab/route_list', 'edit', 'R', '', 'N', '/musab/route+edit', 'P', 'A', 'N', 'A');

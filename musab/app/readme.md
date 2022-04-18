@@ -26,9 +26,9 @@ Routes - is the table of all the routes which can be handled by the server. All 
 - `techieland` is TLD (top level domain).
 - `uz` is SLD (second-level-domain).
 - `443` is PORT.
-- `/musab/route+edit` is PATHNAME.
+- `/musab/route` is PATH.
 - `route` is URN (uniform resource name).
-- `+edit` is PATH_KIND (custom).
+- `edit` is CASE (musab: +add/+edit cases of the same path).
 - `:save` is ACTION (public).
 - `$save` is ACTION (grant).
 - `?route_id=374&action=save` is QUERY.
@@ -38,18 +38,18 @@ Routes - is the table of all the routes which can be handled by the server. All 
 
 <dl>
   <dt><i>route</i></dt>
-  <dd>Route - is URL + ACTION combination. It is Unique.</dd>
+  <dd>Route - is PATH + ACTION combination. It is Unique.</dd>
 
   <dt><i>path</i></dt>
   <dd>Path - is structured as the directory architecture and it is the location of its controller file respectively. URN is the file-name of the controller file.</dd>
 
   <dt><i>action</i></dt>
-  <dd>Action - is the preffered action in that URL. It can started with <b>$</b> which means grant action, or it can start with <b>:</b> which means public action.</dd>
+  <dd>Action - is the preffered action in that URL. It can start with <b>$</b> which means grant action, or it can start with <b>:</b> which means public action.</dd>
 
   <dt><i>route_kind</i></dt>
   <dd>
     Route kind - can be either <b>(P)ath</b>, <b>(A)ction</b> or <b>(R)edirect</b>.<br>
-    <b>(P)ath</b> - No action requesting path only. So, the response would be a HTML document (Content-Type:text/html) in the corresponding path.<br>
+    <b>(P)ath</b> - request doesn't contain any action, it contains only path + case. So, the response would be a HTML document (Content-Type:text/html) in the corresponding path.<br>
     <b>(A)ction</b> - requesting an action to be run in the path. So the response would be the result (Content-Type:application/json) of the called function.<br>
     <b>(R)edirect</b> - Redirection needed. So, response would be the redirection route (Content-Type:application/json).<br>
   </dd>

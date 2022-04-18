@@ -1,4 +1,4 @@
-class Route {
+export default class Route {
   constructor(path, action) {
     // auto-load mode
     // if (!path) return this;
@@ -49,5 +49,3 @@ class Route {
     })(path, action);
   }
 }
-
-module.exports = Route;
