@@ -2,15 +2,15 @@
 
 ### Content:
 
-1. [Routes](#routes)
+1. [Route](#route)
    1. [URL terminology](#URL-terminology)
    1. [Route: Columns](#Route-Columns)
    1. [Route: Constraints](#Route-Constraints)
 1. Roles
 
-## Routes
+## Route
 
-Routes - is the table of all the routes which can be handled by the server. All the other request routes will be responded as `404-Not-Found` error.
+Route - is the table of all the routes which can be handled by the server. All the other request routes will be responded as `404-Not-Found` error.
 
 ### URL terminology
 
@@ -38,7 +38,7 @@ Routes - is the table of all the routes which can be handled by the server. All 
 
 <dl>
   <dt><i>route</i></dt>
-  <dd>Route - is PATH + ACTION combination. It is Unique.</dd>
+  <dd>Route - is PATH + CASE + ACTION combination. It is Unique and primary key of the table.</dd>
 
   <dt><i>path</i></dt>
   <dd>Path - is structured as the directory architecture and it is the location of its controller file respectively. URN is the file-name of the controller file.</dd>
@@ -47,7 +47,10 @@ Routes - is the table of all the routes which can be handled by the server. All 
   <dd>Case - all the different cases of the same path (same controller file) to react differently (+add, +edit).</dd>
 
   <dt><i>action</i></dt>
-  <dd>Action - is the preffered action in that URL. It can start with <b>$</b> which means grant action, or it can start with <b>:</b> which means public action.</dd>
+  <dd>
+    Action - is the preffered action in that URL. It can start with <b>$</b> which means grant action, or it can start with <b>:</b> which means public action.<br>
+    Action is null when route kind is (P)ath
+  </dd>
 
   <dt><i>route_kind</i></dt>
   <dd>
@@ -84,5 +87,3 @@ Routes - is the table of all the routes which can be handled by the server. All 
   <dt><i>state</i></dt>
   <dd>route can be switched off (set to (P)assive) for a while when maintenance is on-going by company head users. And can be switched on back (set to (A)ctive)</dd>
 </dl>
-
-### Route: Constraints

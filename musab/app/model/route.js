@@ -1,19 +1,26 @@
-export default class Route {
+class Route {
+  /**************************************************/
   static kind_path          = 'P';
   static kind_action        = 'A';
   static kind_redirect      = 'R';
+  /**************************************************/
   static pass_parameter_yes = 'Y';
   static pass_parameter_no  = 'N';
+  /**************************************************/
   static privacy_auth       = 'A';
   static privacy_public     = 'P';
+  /**************************************************/
   static access_all         = 'A';
   static access_head        = 'H';
   static access_filial      = 'F';
+  /**************************************************/
   static grant_yes          = 'Y';
   static grant_no           = 'N';
+  /**************************************************/
   static state_active       = 'A';
   static state_passive      = 'P';
-
+  
+  /**************************************************/
   constructor(
     i_route,
     i_path,
@@ -28,7 +35,7 @@ export default class Route {
     i_access,
     i_grant,
     i_state,
-  ) {
+    ) {
     this.route = i_route;
     this.path = i_path;
     this.case = i_case;
@@ -44,11 +51,12 @@ export default class Route {
     this.state = i_state;
   }
 
+  /**************************************************/
   static load(path) {
     // validity(path);
     return (async path => {
       let query = `select t.*
-                     from musab_routes t
+                     from musab_route t
                     where t.route = ?`;
       try {
         var result = await db.call(db.mysql.format(query, [path]));
@@ -75,4 +83,13 @@ export default class Route {
       );
     })(path);
   }
+
+
+
+
+
+
+
 }
+
+module.exports = Route;

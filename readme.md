@@ -1,23 +1,21 @@
 framework_name: Musab, Parvoz, Makon, Orzu, Osmon, Falak, Koinot
 
 Musab - (M)usab - (required) - framework itself - base framework itself no logic at all
-  core - (K)ernel - (required) - framework project - minimal and core logic of applications
-    license - licen(S)e - (optional) - core project module for product licenses per user per module etc...
-
-
-
+core - (K)ernel - (required) - framework project - minimal and core logic of applications
+license - licen(S)e - (optional) - core project module for product licenses per user per module etc...
 
 solved! TODO-issue: database connection pool must be called once !!! (not in every module)
 waiting! TODO-issue: error handling must be done globally (responce.json like { success: false, ... })
 waiting! TODO-task: exchanging json standart template must be created
-waiting! TODO-task: response statuses must be set properly 
+waiting! TODO-task: response statuses must be set properly
 waiting! TODO-task: developing client side of the program
-         (https://dashboardpack.com/bootstrap-templates/free-themes/)
-         (https://dashboardpack.com/live-demo-free/?livedemo=2380)
+(https://dashboardpack.com/bootstrap-templates/free-themes/)
+(https://dashboardpack.com/live-demo-free/?livedemo=2380)
 
-----------------------------------------------------------------------
--- TECHIE-FRAMEWORK (angular/golang or nodejs/posgreSql - no pl/pgsql for back-end!!!)
-----------------------------------------------------------------------
+---
+
+## -- TECHIE-FRAMEWORK (angular/golang or nodejs/posgreSql - no pl/pgsql for back-end!!!)
+
 - techie-layout design should be done
 - authentication
 - tc-stream
@@ -37,107 +35,111 @@ waiting! TODO-task: developing client side of the program
 - installer page in the web which fills the env.js and executes the tables etc...
 - ...
 
-----------------------------------------------------------------------
--- CORE-GLOBAL (company-head)
-----------------------------------------------------------------------
+---
+
+## -- CORE-GLOBAL (company-head)
+
 routes:
-  route_id
-  route_type (auth, public, company-head-only)
-  ...
+route_id
+route_type (auth, public, company-head-only)
+...
 
 companies:
-  company_id
-  ...
+company_id
+...
 
 company_routes:
-  company_id
-  route_id
-  ...
+company_id
+route_id
+...
 
 coupons:
-  coupon_id
-  ...
+coupon_id
+...
 
 licenses:
-  license_id
-  company_id
-  issue_date
-  dueto_date
-  is_paid
-  coupon_id => coupons
-  ...
+license_id
+company_id
+issue_date
+dueto_date
+is_paid
+coupon_id => coupons
+...
 
 layout_lang:
-  language_id
-  ...
+language_id
+...
 
-----------------------------------------------------------------------
--- CORE-LOCAL
-----------------------------------------------------------------------
+---
+
+## -- CORE-LOCAL
+
 -- REF
 countries:
-  company_id
-  country_id
-  ...
+company_id
+country_id
+...
 
 regions:
-  company_id
-  region_id
-  country_id => countries
-  ...
+company_id
+region_id
+country_id => countries
+...
 
 currencies:
-  currency_id
-  ...
+currency_id
+...
 
 --
 filials: (+filial-head)
-  company_id
-  filial_id
-  company_id => companies
-  ...
+company_id
+filial_id
+company_id => companies
+...
 
 persons:
-  company_id
-  person_id
-  ...
+company_id
+person_id
+...
 
 users:
-  company_id
-  user_id
-  company_id
-  person_id => persons
-  ...
+company_id
+user_id
+company_id
+person_id => persons
+...
 
 user_grants:
-  company_id
-  user_id
-  ...
+company_id
+user_id
+...
 
 notifications:
-  company_id
-  notification_id
-  ...
+company_id
+notification_id
+...
 
 - Survey module (not urgent)
   ./survey -- TODO: should be converted to pgsql
 
-----------------------------------------------------------------------
--- HR
-----------------------------------------------------------------------
+---
+
+## -- HR
+
 divisions:
-  company_id
-  division_id
-  ...
+company_id
+division_id
+...
 
 robots:
-  company_id
-  robot_id
-  ...
+company_id
+robot_id
+...
 
-----------------------------------------------------------------------
--- ACADEMY
-----------------------------------------------------------------------
+---
+
+## -- ACADEMY
+
 - LMS
 - video tutorials (private/public)
 - assignments with deadlines
@@ -146,9 +148,10 @@ robots:
 - attendance (offline/online)
 - ...
 
-----------------------------------------------------------------------
--- QUIZ
-----------------------------------------------------------------------
+---
+
+## -- QUIZ
+
 - Quiz module (urgent!)
   ./quiz -- TODO: should be converted to pgsql
 - shuffle the exam paper

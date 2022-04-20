@@ -3,5 +3,5 @@ module.exports = {
 };
 
 async function model() {
-  return await db.call('SELECT * FROM MUSAB_ROUTES');
+  return await db.call('SELECT * FROM MUSAB_ROUTE');
 }

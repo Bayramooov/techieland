@@ -3,7 +3,7 @@ const Route = require('../model/route');
 module.exports = (req, res, next) => {
   (async () => {
     try {
-      var route = await new Route(req.url, 'model');
+      var route = await Route.load(req.url);
     } catch (err) {
       console.error(err);
       res.status(400).send('<pre>' + 'Bad request!<br><br>' + err + '</pre>');
@@ -12,7 +12,7 @@ module.exports = (req, res, next) => {
     if (route.state == 'P') { next(); return; }
 
     try {
-      var load = await require(`../ui${route.path}`)['model']();
+      var load = await require(`../ui${route.path}`)[route.function]();
     } catch (err) {
       console.error(err);
       res.status(400).send('<pre>' + 'Bad request!<br><br>' + err + '</pre>');
