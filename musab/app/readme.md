@@ -43,6 +43,9 @@ Routes - is the table of all the routes which can be handled by the server. All 
   <dt><i>path</i></dt>
   <dd>Path - is structured as the directory architecture and it is the location of its controller file respectively. URN is the file-name of the controller file.</dd>
 
+  <dt><i>case</i></dt>
+  <dd>Case - all the different cases of the same path (same controller file) to react differently (+add, +edit).</dd>
+
   <dt><i>action</i></dt>
   <dd>Action - is the preffered action in that URL. It can start with <b>$</b> which means grant action, or it can start with <b>:</b> which means public action.</dd>
 
@@ -51,8 +54,11 @@ Routes - is the table of all the routes which can be handled by the server. All 
     Route kind - can be either <b>(P)ath</b>, <b>(A)ction</b> or <b>(R)edirect</b>.<br>
     <b>(P)ath</b> - request doesn't contain any action, it contains only path + case. So, the response would be a HTML document (Content-Type:text/html) in the corresponding path.<br>
     <b>(A)ction</b> - requesting an action to be run in the path. So the response would be the result (Content-Type:application/json) of the called function.<br>
-    <b>(R)edirect</b> - Redirection needed. So, response would be the redirection route (Content-Type:application/json).<br>
+    <b>(R)edirect</b> - Redirection to a differenct path. So, response would be the parent redirection route (Content-Type:text/html).<br>
   </dd>
+
+  <dt><i>parent_route</i></dt>
+  <dd>Parent route - is a route_kind = (P)ath route which is a parent of all the (A)ction & (R)edirect routes</dd>
 
   <dt><i>function</i></dt>
   <dd>Function - is a function name in the controller file which needs to be run when corresponding action will be called.</dd>
