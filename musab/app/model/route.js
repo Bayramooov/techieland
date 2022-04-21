@@ -3,19 +3,24 @@ class Route {
   static kind_path          = 'P';
   static kind_action        = 'A';
   static kind_redirect      = 'R';
+  
   /**************************************************/
   static pass_parameter_yes = 'Y';
   static pass_parameter_no  = 'N';
+  
   /**************************************************/
   static privacy_auth       = 'A';
   static privacy_public     = 'P';
+  
   /**************************************************/
   static access_all         = 'A';
   static access_head        = 'H';
   static access_filial      = 'F';
+  
   /**************************************************/
   static grant_yes          = 'Y';
   static grant_no           = 'N';
+  
   /**************************************************/
   static state_active       = 'A';
   static state_passive      = 'P';
@@ -83,13 +88,6 @@ class Route {
       );
     })(path);
   }
-
-
-
-
-
-
-
 }
 
 module.exports = Route;
