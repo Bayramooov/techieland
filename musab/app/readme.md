@@ -28,7 +28,7 @@ Route - is the table of all the routes which can be handled by the server. All t
 - `443` is PORT.
 - `/musab/route` is PATH.
 - `route` is URN (uniform resource name).
-- `edit` is CASE (musab: +add/+edit cases of the same path).
+- `+edit` is CASE (musab: +add/+edit cases of the same path).
 - `:save` is ACTION (public).
 - `$save` is ACTION (grant).
 - `?route_id=374&action=save` is QUERY.

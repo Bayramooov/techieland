@@ -6,8 +6,8 @@
  * and the sample-env.js file must be
  * renamed into env.js.
  * 
- * Warning! file must be ignored in the
- * .gitignore file as it contains
+ * Warning! env.js must be ignored in the
+ * .gitignore as it contains
  * sensitive information
  */
 
@@ -16,17 +16,17 @@ module.exports = {
   port: null,
   
   // database credentials
-  connection_limit: null,
+  connection_limit: 100,
   host: '',
   user: '',
   password: '',
   database: '',
-  debug: null,
+  debug: false,
 
   // TODO: depricated
   base_path: __dirname,
 
-  // dependents
+  // TODO: dependents
   projects: [
     {
       name: '',

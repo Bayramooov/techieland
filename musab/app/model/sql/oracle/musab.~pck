@@ -1,0 +1,7 @@
+create or replace package Musab is
+
+end Musab;
+/
+create or replace package body Musab is
+end Musab;
+/
