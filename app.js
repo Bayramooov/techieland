@@ -4,6 +4,7 @@ const app = express();
 
 // middlewares
 app.use(require('./middleware/parse-url'));
+app.use(require('./middleware/response'));
 
 // 404 not found
 app.all('*', (req, res) => {

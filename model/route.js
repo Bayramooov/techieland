@@ -1,4 +1,4 @@
-class Route {
+module.exports = class Route {
   /**************************************************/
   static kind_path          = 'P';
   static kind_action        = 'A';
@@ -58,19 +58,17 @@ class Route {
 
   /**************************************************/
   static load(path) {
-    // validity(path);
     return (async path => {
       let query = `select t.*
                      from musab_route t
                     where t.route = ?`;
-      try {
-        var result = await db.call(db.mysql.format(query, [path]));
-      } catch (error) {
-        console.error(error);
-        return this;
-      }
-      result = JSON.parse(JSON.stringify(result))[0];
       
+      try { var rows = await db.call(db.mysql.format(query, [path])); }
+      catch (err) { return Promise.reject(err); }
+      if (!rows.length) return Promise.reject(new Error('no data found'));
+
+      const result = JSON.parse(JSON.stringify(rows))[0];
+
       return new Route(
         result.route,
         result.path,
@@ -89,5 +87,3 @@ class Route {
     })(path);
   }
 }
-
-module.exports = Route;
