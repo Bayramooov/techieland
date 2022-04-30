@@ -65,7 +65,7 @@ module.exports = class Route {
       
       try { var rows = await db.call(db.mysql.format(query, [path])); }
       catch (err) { return Promise.reject(err); }
-      if (!rows.length) return Promise.reject(new Error('no data found'));
+      if (!rows.length) return Promise.reject(new Error(`'${path}', no data found`));
 
       const result = JSON.parse(JSON.stringify(rows))[0];
 

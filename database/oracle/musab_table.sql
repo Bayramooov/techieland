@@ -1,5 +1,5 @@
-prompt Application module
-prompt (c) 2019 Green White Solutions (www.greenwhite.uz)
+prompt Musab
+prompt (c) 2022 Techieland LLC (www.techieland.uz)
 
 ----------------------------------------------------------------------------------------------------
 create table musab_route(
@@ -54,22 +54,29 @@ comment on column musab_route.route_access is '(A)ll, (H)ead-filial, (F)ilial';
 comment on column musab_route.route_grant is '(Y)es, (N)o';
 comment on column musab_route.state is '(A)ctive, (P)assive';
 
-
 create index musab_route_i1 on musab_route (parent_route);
 create index musab_route_i2 on musab_route (redirection_route);
 
---------------------------------------------------
--- inserting into ROUTE
--- (route, path, case, action, route_kind, parent_route, function, pass_parameter, redirection_route, privacy, access, grant, state)
-insert into musab_route values ('/musab/route+add', '/musab/route', '+add', null, 'P', null, null, 'N', null, 'P', 'A', 'N', 'A');
-insert into musab_route values ('/musab/route+add:model', '/musab/route', '+add', ':model', 'A', '/musab/route+add', 'add_model', 'Y', null, 'P', 'A', 'N', 'A');
-insert into musab_route values ('/musab/route+add:save', '/musab/route', '+add', ':save', 'A', '/musab/route+add', 'add', 'Y', null, 'P', 'A', 'N', 'A');
-
-insert into musab_route values ('/musab/route+edit', '/musab/route', '+edit', null, 'P', null, null, 'N', null, 'P', 'A', 'N', 'A');
-insert into musab_route values ('/musab/route+edit:model', '/musab/route', '+edit', ':model', 'A', '/musab/route+edit', 'edit_model', 'Y', null, 'P', 'A', 'N', 'A');
-insert into musab_route values ('/musab/route+edit:save', '/musab/route', '+edit', ':save', 'A', '/musab/route+edit', 'add', 'Y', null, 'P', 'A', 'N', 'A');
-
-insert into musab_route values ('/musab/route_list', '/musab/route_list', null, null, 'P', null, null, 'N', null, 'P', 'A', 'N', 'A');
-insert into musab_route values ('/musab/route_list:model', '/musab/route_list', null, ':model', 'A', '/musab/route_list', 'model', 'N', null, 'P', 'A', 'N', 'A');
-insert into musab_route values ('/musab/route_list:add', '/musab/route_list', null, ':add', 'R', '/musab/route_list', null, 'N', '/musab/route+add', 'P', 'A', 'N', 'A');
-insert into musab_route values ('/musab/route_list:edit', '/musab/route_list', null, ':edit', 'R', '/musab/route_list', null, 'N', '/musab/route+edit', 'P', 'A', 'N', 'A');
+----------------------------------------------------------------------------------------------------
+-- TEMP
+----------------------------------------------------------------------------------------------------
+create table musab_test(
+  company_id                      number(20)         not null,
+  medicine_form_item_id           number(20)         not null,
+  medicine_form_id                number(20)         not null,
+  name_ru                         varchar2(200 char) not null,
+  name_uz                         varchar2(200 char) not null,
+  name_en                         varchar2(200 char) not null,
+  name_latin                      varchar2(200 char),
+  state                           varchar2(1)        not null,
+  order_no                        number(6),
+  pcode                           varchar2(20),
+  constraint musab_test_pk primary key (company_id, medicine_form_item_id),
+  constraint musab_test_u1 unique (medicine_form_item_id),
+  constraint musab_test_u2 unique (company_id, medicine_form_item_id, medicine_form_id),
+  constraint musab_test_c1 check (decode(name_ru, trim(name_ru), 1, 0) = 1),
+  constraint musab_test_c2 check (decode(name_uz, trim(name_uz), 1, 0) = 1),
+  constraint musab_test_c3 check (decode(name_en, trim(name_en), 1, 0) = 1),
+  constraint musab_test_c4 check (decode(name_latin, trim(name_latin), 1, 0) = 1),
+  constraint musab_test_c5 check (state in ('A', 'P'))
+);
