@@ -123,7 +123,7 @@ create or replace package body z_Table is
   ----------------------------------------------------------------------------------------------------
   Function Gen_Load(i_Table_Name varchar2) return varchar2 is
   begin
-    return Gen_Load_Header(i_Table_Name) || ' is r_row ' || i_Table_Name || '%rowtype; begin select * into r_row from ' || i_Table_Name || ' t where ' || Get_Pk_Where(i_Table_Name) || '; return r_row; end;';
+    return Gen_Load_Header(i_Table_Name) || ' is r_row ' || i_Table_Name || '%rowtype; begin select t.* into r_row from ' || i_Table_Name || ' t where ' || Get_Pk_Where(i_Table_Name) || '; return r_row; end;';
   end;
 
   ----------------------------------------------------------------------------------------------------

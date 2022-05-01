@@ -10,25 +10,28 @@ module.exports = (req, res, next) => {
   }
 
   (async () => {
-    try { var route = await Route.load(req.url); }
-
-    catch (err) {
+    try {
+      var route = await Route.load(req.url);
+    } catch (err) {
       console.error(err);
 
-      if (err.message == 'no data found') {
+      if (/no data found/.test(err.message)) {
         return send(404);
       }
       
+      return send(500);
+    }
+
+    if (
+      route.route_kind == Route.kind_path ||
+      route.state == Route.state_passive
+    ) {
       return send(400);
     }
 
-    if (route.state == 'P') {
-      return send(400);
-    }
-
-    try { var load = await require(`../ui${route.path}`)[route.function](); }
-    
-    catch (err) {
+    try {
+      var load = await require(`../ui${route.path}`)[route.function]();
+    } catch (err) {
       return send(400);
     }
 

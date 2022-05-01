@@ -62,10 +62,15 @@ module.exports = class Route {
       let query = `select t.*
                      from musab_route t
                     where t.route = ?`;
-      
-      try { var rows = await db.call(db.mysql.format(query, [path])); }
-      catch (err) { return Promise.reject(err); }
-      if (!rows.length) return Promise.reject(new Error(`'${path}', no data found`));
+      try {
+        var rows = await db.call(db.mysql.format(query, [path]));
+      } catch (err) {
+        return Promise.reject(err);
+      }
+
+      if (!rows.length) {
+        return Promise.reject(new Error(`'${path}', no data found`));
+      }
 
       const result = JSON.parse(JSON.stringify(rows))[0];
 
