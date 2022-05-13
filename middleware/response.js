@@ -1,7 +1,7 @@
 const error = {
   400: 'bad request',
   404: 'requested route not found',
-  500: "something went wrong"
+  500: 'something went wrong'
 };
 
 class Response {

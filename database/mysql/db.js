@@ -11,7 +11,7 @@ const pool = mysql.createPool({
 
 const call = query => {
   return new Promise((res, rej) => {
-    db.pool.query(query, (err, rows) => {
+    pool.query(query, (err, rows) => {
       if (err) return rej(err);
       return res(rows);
     });

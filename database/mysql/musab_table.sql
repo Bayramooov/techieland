@@ -34,6 +34,7 @@
     dependency_id
 
 ****************************************************************************************************/
+-- --------------------------------------------------------------------------------------------------
 create table `musab_route`(
   `route`                         varchar(500) not null,
   `path`                          varchar(500) not null,
@@ -84,12 +85,19 @@ create index `musab_route_i2` on `musab_route` (`redirection_route`);
 -- parent route (route_kind = P) and model route (route_kind = A, action = ':model') are always gonna be called together
 -- if parent route state is passive then all the childrens' state must be passive
 
+-- --------------------------------------------------------------------------------------------------
+create table `musab_company`(
+  `company_id`                    int(20) unsigned not null,
+  `company_code`                  varchar(50)      not null comment 'Company unique identifier',
+  `state`                         varchar(1)       not null comment '(A)ctive, (Passive)',
+  constraint `musab_company_pk` primary key (`company_id`),
+  constraint `musab_company_u1` unique (`company_code`),
+  constraint `musab_company_c1` check (`state` in ('A', 'P'))
+);
+
+alter table `musab_company` comment 'musab-dev: company';
+
 /****************************************************************************************************
-  companies:
-    company_id
-    code
-    state
-  
   -- hirarchial menu items of a project
   menus:
     menu_id
@@ -97,11 +105,17 @@ create index `musab_route_i2` on `musab_route` (`redirection_route`);
     parent_id
     path_code
     route_action_id
-  
-  users:
-    company_id
-    user_id
-    login
-    password
-
 ****************************************************************************************************/
+
+-- --------------------------------------------------------------------------------------------------
+create table `musab_user`(
+  `company_id`                    int(20) unsigned not null,
+  `user_id`                       int(20) unsigned not null,
+  `username`                      varchar(50)      not null,
+  `password`                      varchar(64)      not null,
+  `state`                         varchar(1)       not null comment '(A)ctive, (P)assive',
+  constraint `musab_user_pk` primary key (`company_id`, `user_id`),
+  constraint `musab_user_u1` unique (`user_id`),
+  constraint `musab_user_u2` unique (`company_id`, `username`),
+  constraint `musab_user_c1` check (`state` in ('A', 'P'))
+);
