@@ -2,7 +2,7 @@ prompt Musab
 prompt (c) 2022 Techieland LLC (www.techieland.uz)
 
 ----------------------------------------------------------------------------------------------------
--- ROUTE (route, path, case, action, route_kind, parent_route, function, pass_parameter, redirection_route, privacy, access, grant, state)
+-- ROUTE (route, path, mode, action, route_kind, parent_route, function, pass_parameter, redirection_route, privacy, access, grant, state)
 insert into musab_route values ('/musab/route+add', '/musab/route', '+add', null, 'P', null, null, 'N', null, 'P', 'A', 'N', 'A');
 insert into musab_route values ('/musab/route+add:model', '/musab/route', '+add', ':model', 'A', '/musab/route+add', 'add_model', 'Y', null, 'P', 'A', 'N', 'A');
 insert into musab_route values ('/musab/route+add:save', '/musab/route', '+add', ':save', 'A', '/musab/route+add', 'add', 'Y', null, 'P', 'A', 'N', 'A');
