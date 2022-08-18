@@ -29,7 +29,7 @@ module.exports = class Route {
   constructor(
     i_route,
     i_path,
-    i_case,
+    i_mode,
     i_action,
     i_route_kind,
     i_parent_route,
@@ -43,7 +43,7 @@ module.exports = class Route {
     ) {
     this.route = i_route;
     this.path = i_path;
-    this.case = i_case;
+    this.mode = i_mode;
     this.action = i_action;
     this.route_kind = i_route_kind;
     this.parent_route = i_parent_route;
@@ -61,9 +61,10 @@ module.exports = class Route {
     return (async path => {
       let query = `select t.*
                      from musab_route t
-                    where t.route = ?`;
+                    where t.route = ?
+                      and t.route_kind <> ?`;
       try {
-        var rows = await db.call(db.mysql.format(query, [path]));
+        var rows = await db.call(db.mysql.format(query, [path, kind_path]));
       } catch (err) {
         return Promise.reject(err);
       }
@@ -77,7 +78,7 @@ module.exports = class Route {
       return new Route(
         result.route,
         result.path,
-        result.case,
+        result.mode,
         result.action,
         result.route_kind,
         result.parent_route,
