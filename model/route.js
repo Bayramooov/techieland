@@ -64,7 +64,7 @@ module.exports = class Route {
                     where t.route = ?
                       and t.route_kind <> ?`;
       try {
-        var rows = await db.call(db.mysql.format(query, [path, kind_path]));
+        var rows = await db.call(db.mysql.format(query, [path, Route.kind_path]));
       } catch (err) {
         return Promise.reject(err);
       }
