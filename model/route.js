@@ -22,10 +22,6 @@ module.exports = class Route {
   static grant_no           = 'N';
   
   /**************************************************/
-  static state_active       = 'A';
-  static state_passive      = 'P';
-  
-  /**************************************************/
   constructor(
     i_route,
     i_path,
@@ -57,20 +53,20 @@ module.exports = class Route {
   }
 
   /**************************************************/
-  static load(path) {
-    return (async path => {
+  static load(route) {
+    return (async route => {
       let query = `select t.*
                      from musab_route t
                     where t.route = ?
-                      and t.route_kind <> ?`;
+                      and t.state = 'A'`;
       try {
-        var rows = await db.call(db.mysql.format(query, [path, Route.kind_path]));
+        var rows = await db.call(db.mysql.format(query, [route]));
       } catch (err) {
         return Promise.reject(err);
       }
 
       if (!rows.length) {
-        return Promise.reject(new Error(`'${path}', no data found`));
+        return Promise.reject(new Error(`route='${route}', no data found`));
       }
 
       const result = JSON.parse(JSON.stringify(rows))[0];
@@ -90,6 +86,32 @@ module.exports = class Route {
         result.grant,
         result.state
       );
-    })(path);
+    })(route);
+  }
+
+  /**************************************************/
+  static load_children(route) {
+    return (async route => {
+      let query = `select *
+                     from musab_route t
+                    where t.parent_route = ?
+                      and exists(select 1
+                                   from musab_route q
+                                  where q.route = t.parent_route
+                                    and q.state = 'A')`;
+      try {
+        var rows = await db.call(db.mysql.format(query, [route]));
+      } catch (err) {
+        return Promise.reject(err);
+      }
+
+      if (!rows.length) {
+        return Promise.reject(new Error(`parent_route='${route}', no data found`));
+      }
+      
+      const result = JSON.parse(JSON.stringify(rows));
+      
+      return result;
+    })(route);
   }
 }
