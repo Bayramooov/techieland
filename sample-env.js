@@ -11,9 +11,9 @@
  * sensitive information
  */
 
-module.exports = {
+ module.exports = {
   // Server port
-  port: '',
+  port: '4500',
 
   // Default Relational Database Management System to use
   rdbms: {
@@ -25,10 +25,10 @@ module.exports = {
   // Mysql - database credentials
   mysql: {
     connection_limit: 100,
-    host: '',
-    user: '',
+    host: 'localhost',
+    user: 'root',
     password: '',
-    database: '',
+    database: 'musab',
     debug: false
   },
   
