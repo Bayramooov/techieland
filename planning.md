@@ -12,6 +12,12 @@ waiting! TODO-task: developing client side of the program
 (https://dashboardpack.com/bootstrap-templates/free-themes/)
 (https://dashboardpack.com/live-demo-free/?livedemo=2380)
 
+#idea
+Authorization:
+  updating client cookie in every request.
+  Adding extra 5 minuts to expire the access token.
+  Adding system settings to set the expiration duration (default: 5mins)
+
 ---
 
 ## -- TECHIE-FRAMEWORK (angular/golang or nodejs/posgreSql - no pl/pgsql for back-end!!!)
