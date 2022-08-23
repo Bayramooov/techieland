@@ -5,6 +5,7 @@ const app = express();
 // middlewares
 app.use(require('./middleware/cors'));
 app.use(require('./middleware/parse-url'));
+app.use(require('./middleware/parse-cookie'));
 app.use(require('./middleware/response'));
 
 // 404 not found

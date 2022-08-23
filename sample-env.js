@@ -1,4 +1,4 @@
-/**
+/*
  * Sample environment module to provide
  * application credentials.
  * 
@@ -7,11 +7,11 @@
  * renamed into env.js.
  * 
  * Warning! env.js must be ignored in the
- * .gitignore as it contains
+ * .gitignore file as it contains
  * sensitive information
  */
 
- module.exports = {
+module.exports = {
   // Server port
   port: '4500',
 
