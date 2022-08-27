@@ -11,7 +11,7 @@ module.exports = (req, res, next) => {
 
   (async () => {
     try {
-      var route = await Route.load(req.url);
+      var route = await Route.load(req._parsedUrl.pathname);
     } catch (err) {
       console.error(err);
 
@@ -30,7 +30,8 @@ module.exports = (req, res, next) => {
     }
 
     try {
-      var load = await require(`../ui${route.path}`)[route.function]();
+      // TODO: req.query this is only passed by url. Body should be also implemented
+      var load = await require(`../ui${route.path}`)[route.function](req.query);
     } catch (err) {
       return send(400);
     }

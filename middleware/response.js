@@ -21,7 +21,7 @@ class Response {
 
 module.exports = (req, res) => {
   ({ status_code, result } = req.send);
-  res.status(status_code).json(new Response(status_code, result));
+  // res.status(status_code).json(new Response(status_code, result));
   // TODO: TEMP
-  // res.status(status_code).send(`<pre>${JSON.stringify(new Response(status_code, result), false, 4)}</pre>`);
+  res.status(status_code).send(`<h2><pre>${JSON.stringify(new Response(status_code, result), false, 4)}</pre></h2>`);
 }
