@@ -7,7 +7,13 @@
  * here it will be initialized only once.
  */
 
+global._ = require('lodash');
 global.env = require('./env.js');
+
+// TODO: path parser must be used here.
+global.a = (path) => {
+  return __dirname + path;
+}
 
 if (env.rdbms.mysql)
   global.db = require('./database/mysql/db');

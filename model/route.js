@@ -90,11 +90,12 @@ module.exports = class Route {
   }
 
   /**************************************************/
-  static load_children(route) {
+  static loadChildren(route) {
     return (async route => {
       let query = `select *
                      from musab_route t
                     where t.parent_route = ?
+                      and t.state = 'A'
                       and exists(select 1
                                    from musab_route q
                                   where q.route = t.parent_route
