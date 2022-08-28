@@ -21,9 +21,9 @@ Authorization:
 ---
 
 ## -- TECHIE-FRAMEWORK (angular/golang or nodejs/posgreSql - no pl/pgsql for back-end!!!)
+- authentication
 
 - techie-layout design should be done
-- authentication
 - tc-stream
 - tc-grid with tc-stream
 - tc-input with tc-stream

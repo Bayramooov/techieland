@@ -1,18 +1,16 @@
-const Route = require('../model/route');
 module.exports = async (req, res, next) => {
-  
+const Route = require('../model/route');
+
+
 // Calling Next() from here with a structured send-data
-const send = (status_code, result) => {
-  req.send = {
-    status_code: status_code,
-    result: result,
-  };
+function send(status_code, result) {
+  req.send = { status_code: status_code, result: result };
   next();
 }
 
 
 // Loading Route & Exception-handling
-const laodRoute = async (route) => {
+async function laodRoute(route) {
   try { var result = await Route.load(route); }
   catch (err) { 
     console.error(err);
@@ -25,7 +23,7 @@ const laodRoute = async (route) => {
 
 
 // Loading Child routes & Exception-handling Route
-const loadRouteChildren = async (route) => {
+async function loadRouteChildren (route) {
   try { var result = await Route.loadChildren(route); }
   catch (err) {
     console.error(err);
@@ -38,13 +36,10 @@ const loadRouteChildren = async (route) => {
 
 
 // Runs the controller in the ui/ path respectively
-const runController = async (path, call, pass) => {
+async function runController(path, call, pass) {
   // TODO: req.query this is only passed by url. Body should be also implemented
-  try {
-    var result = await require(`./../ui${ path }`)[call](pass);
-  } catch (err) {
-    return send(400);
-  }
+  try { var result = await require(`./../ui${ path }`)[call](pass); }
+  catch (err) { return send(400); }
   return result;
 }
 
