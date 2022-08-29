@@ -44,7 +44,9 @@ async function runController(path, call, pass) {
 }
 
 // ///////////////////////////////////////////////////////////////////////
-let route = await laodRoute(req._parsedUrl.pathname);
+try {
+  var route = await laodRoute(req._parsedUrl.pathname);
+} catch { return; }
 
 if (route.route_kind == Route.kind_action) {
   // TODO: req.query this is only passed by url. Body should be also implemented

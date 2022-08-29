@@ -18,6 +18,14 @@ Authorization:
   Adding extra 5 minuts to expire the access token.
   Adding system settings to set the expiration duration (default: 5mins)
 
+#idea
+auths table
+  last_seen
+  created_on
+  soft deadline
+  hard deadline
+  random-unique-string key for client
+  session_id
 ---
 
 ## -- TECHIE-FRAMEWORK (angular/golang or nodejs/posgreSql - no pl/pgsql for back-end!!!)
