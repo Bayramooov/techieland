@@ -10,7 +10,7 @@
 
 ## Route
 
-Route - is the table of all the routes which can be handled by the server. All the other request routes will be responded as `404-Not-Found` error.
+Route - is the table of all the routes which can be handled by the server. All the other requested routes will be responded with `404-Not-Found` error.
 
 ### URL terminology
 
